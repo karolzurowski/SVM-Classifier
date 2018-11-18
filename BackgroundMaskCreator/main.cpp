@@ -8,10 +8,6 @@
 using namespace cv;
 using namespace std;
 
-// Convert to string
-
-
-Mat CreateBackGroundMask(string );
 
 int main(int argc, char **argv)
 {
@@ -21,7 +17,7 @@ int main(int argc, char **argv)
 	try
 	{
 		MaskManager maskManager(inputPath);
-		maskManager.CreateBackGroundMasks();
+		maskManager.CreateBackgroundMasks();
 	}
 	catch (filesystem::filesystem_error& error)
 	{

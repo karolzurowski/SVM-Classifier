@@ -18,7 +18,7 @@ MaskManager::MaskManager(const string& inputDirectoryPath, const string& outputD
 	}
 	else
 	{
-		throw filesystem::filesystem_error("Path not valid",error_code());
+		throw filesystem::filesystem_error("Path not valid", error_code());
 	}
 }
 
@@ -40,13 +40,13 @@ void MaskManager::SaveImage(const filesystem::path& imgPath, Mat sourceImg) cons
 Mat MaskManager::CalculateBackgroundMask(Mat& inputImg, int minMaskSize, int maxMaskSize) const
 {
 	Mat tempImage;
-	
+
 	bitwise_not(inputImg, tempImage);
-	distanceTransform(tempImage, tempImage, CV_DIST_L1, 3);	
+	distanceTransform(tempImage, tempImage, CV_DIST_L1, 3);
 	normalize(tempImage, tempImage, 0, 255, NORM_MINMAX);
-	
+
 	tempImage.convertTo(tempImage, CV_8UC1);
-	
+
 	int resultSize = 0;
 	int distance = 500;
 	int loops = 0;
@@ -69,42 +69,41 @@ Mat MaskManager::CalculateBackgroundMask(Mat& inputImg, int minMaskSize, int max
 	return outputImage;
 }
 
-void MaskManager::CreateBackgroundMask(const filesystem::path& imgPath) const
+Mat MaskManager::CreateBackgroundMask(const filesystem::path& imgPath) const
 {
 	string fullPath = imgPath.string();
 	Mat sourceImg = imread(fullPath, CV_LOAD_IMAGE_GRAYSCALE);
-	
+
 	int imgSize = sourceImg.rows * sourceImg.cols;
 	int maskSize = countNonZero(sourceImg);
 
-	cv::threshold(sourceImg, sourceImg, initialThreshold, 255, THRESH_BINARY);	
+	cv::threshold(sourceImg, sourceImg, initialThreshold, 255, THRESH_BINARY);
 	waitKey(3000);
 
 	if (maskSize >= imgSize / 2)
 	{
-		
+
 		cout << imgPath << "\t Mask size to big, inverting and saving..." << endl;
 		bitwise_not(sourceImg, sourceImg);
-		
-		
-		SaveImage(imgPath, sourceImg);
+
+
+		return sourceImg;
 	}
 	else
 	{
 		int maxBackgroundMaskSize = 1.1*maskSize;
 		int minBackgroundMaskSize = 0.9*maskSize;
 
-		Mat outputImg = CalculateBackgroundMask(sourceImg, minBackgroundMaskSize, maxBackgroundMaskSize);
-
-		SaveImage(imgPath, outputImg);
+		return CalculateBackgroundMask(sourceImg, minBackgroundMaskSize, maxBackgroundMaskSize);
 	}
 }
 
-void MaskManager::CreateBackGroundMasks()
+void MaskManager::CreateBackgroundMasks()
 {
-	Mat sourceImg;
+	Mat resultImg;
 	for (const auto & imgPath : imgPaths)
 	{
-		CreateBackgroundMask(imgPath);
+		resultImg = CreateBackgroundMask(imgPath);
+		SaveImage(imgPath, resultImg);
 	}
 }
