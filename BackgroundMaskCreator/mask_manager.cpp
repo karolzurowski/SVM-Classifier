@@ -14,7 +14,12 @@ MaskManager::MaskManager(const string& inputDirectoryPath, const string& outputD
 	if (filesystem::exists(inputDirectoryPath) && filesystem::is_directory(inputDirectoryPath))
 	{
 		for (const auto& imgPath : filesystem::directory_iterator(inputDirectoryPath))
-			imgPaths.push_back(imgPath.path());
+		{
+			/*if (imgPath.is_regular_file())*/
+			{
+				imgPaths.push_back(imgPath.path());
+			}
+		}
 	}
 	else
 	{
@@ -34,7 +39,63 @@ void MaskManager::SaveImage(const filesystem::path& imgPath, Mat sourceImg) cons
 
 	string outputString = outputPath.string();
 	cout << "Saving:\t" << outputPath << endl;
+
 	imwrite(outputString, sourceImg);
+}
+
+
+void MaskManager::CreateBackgroundMasks()
+{
+	Mat resultImg;
+	for (const auto & imgPath : imgPaths)
+	{
+		try
+		{
+			resultImg = CreateBackgroundMask(imgPath);
+			SaveImage(imgPath, resultImg);
+		}
+		catch (const std::exception &ex)
+		{
+			cout << ex.what();
+		}
+	}
+}
+
+Mat MaskManager::CreateBackgroundMask(const filesystem::path& imgPath) const
+{
+	string fullPath = imgPath.string();
+	Mat sourceImg = imread(fullPath, CV_LOAD_IMAGE_GRAYSCALE);
+
+	if (sourceImg.data == NULL)
+	{
+		string error = imgPath.string() + "\tis invalid!";
+		CV_Error(-1, "Invalid image file");
+	}
+
+
+
+	int imgSize = sourceImg.rows * sourceImg.cols;
+	int maskSize = countNonZero(sourceImg);
+
+	cv::threshold(sourceImg, sourceImg, initialThreshold, 255, THRESH_BINARY);
+
+
+	if (maskSize >= imgSize / 2)
+	{
+
+		cout << imgPath << "\t Mask size to big, inverting and saving..." << endl;
+		bitwise_not(sourceImg, sourceImg);
+
+
+		return sourceImg;
+	}
+	else
+	{
+		int maxBackgroundMaskSize = 1.1*maskSize;
+		int minBackgroundMaskSize = 0.9*maskSize;
+
+		return CalculateBackgroundMask(sourceImg, minBackgroundMaskSize, maxBackgroundMaskSize);
+	}
 }
 
 Mat MaskManager::CalculateBackgroundMask(Mat& inputImg, int minMaskSize, int maxMaskSize) const
@@ -69,41 +130,6 @@ Mat MaskManager::CalculateBackgroundMask(Mat& inputImg, int minMaskSize, int max
 	return outputImage;
 }
 
-Mat MaskManager::CreateBackgroundMask(const filesystem::path& imgPath) const
-{
-	string fullPath = imgPath.string();
-	Mat sourceImg = imread(fullPath, CV_LOAD_IMAGE_GRAYSCALE);
-
-	int imgSize = sourceImg.rows * sourceImg.cols;
-	int maskSize = countNonZero(sourceImg);
-
-	cv::threshold(sourceImg, sourceImg, initialThreshold, 255, THRESH_BINARY);
-	waitKey(3000);
-
-	if (maskSize >= imgSize / 2)
-	{
-
-		cout << imgPath << "\t Mask size to big, inverting and saving..." << endl;
-		bitwise_not(sourceImg, sourceImg);
 
 
-		return sourceImg;
-	}
-	else
-	{
-		int maxBackgroundMaskSize = 1.1*maskSize;
-		int minBackgroundMaskSize = 0.9*maskSize;
 
-		return CalculateBackgroundMask(sourceImg, minBackgroundMaskSize, maxBackgroundMaskSize);
-	}
-}
-
-void MaskManager::CreateBackgroundMasks()
-{
-	Mat resultImg;
-	for (const auto & imgPath : imgPaths)
-	{
-		resultImg = CreateBackgroundMask(imgPath);
-		SaveImage(imgPath, resultImg);
-	}
-}
