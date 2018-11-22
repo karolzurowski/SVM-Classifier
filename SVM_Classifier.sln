@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27703.2042
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BackgroundMaskCreator", "BackgroundMaskCreator\BackgroundMaskCreator.vcxproj", "{53858CBA-3254-4CA4-B84D-22DC57BA1913}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SVM_Classifier", "SVM_Classifier\SVM_Classifier.vcxproj", "{E14AB33A-B149-4149-976F-340AA4F69742}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,14 +13,14 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{53858CBA-3254-4CA4-B84D-22DC57BA1913}.Debug|x64.ActiveCfg = Debug|x64
-		{53858CBA-3254-4CA4-B84D-22DC57BA1913}.Debug|x64.Build.0 = Debug|x64
-		{53858CBA-3254-4CA4-B84D-22DC57BA1913}.Debug|x86.ActiveCfg = Debug|Win32
-		{53858CBA-3254-4CA4-B84D-22DC57BA1913}.Debug|x86.Build.0 = Debug|Win32
-		{53858CBA-3254-4CA4-B84D-22DC57BA1913}.Release|x64.ActiveCfg = Release|x64
-		{53858CBA-3254-4CA4-B84D-22DC57BA1913}.Release|x64.Build.0 = Release|x64
-		{53858CBA-3254-4CA4-B84D-22DC57BA1913}.Release|x86.ActiveCfg = Release|Win32
-		{53858CBA-3254-4CA4-B84D-22DC57BA1913}.Release|x86.Build.0 = Release|Win32
+		{E14AB33A-B149-4149-976F-340AA4F69742}.Debug|x64.ActiveCfg = Debug|x64
+		{E14AB33A-B149-4149-976F-340AA4F69742}.Debug|x64.Build.0 = Debug|x64
+		{E14AB33A-B149-4149-976F-340AA4F69742}.Debug|x86.ActiveCfg = Debug|Win32
+		{E14AB33A-B149-4149-976F-340AA4F69742}.Debug|x86.Build.0 = Debug|Win32
+		{E14AB33A-B149-4149-976F-340AA4F69742}.Release|x64.ActiveCfg = Release|x64
+		{E14AB33A-B149-4149-976F-340AA4F69742}.Release|x64.Build.0 = Release|x64
+		{E14AB33A-B149-4149-976F-340AA4F69742}.Release|x86.ActiveCfg = Release|Win32
+		{E14AB33A-B149-4149-976F-340AA4F69742}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
