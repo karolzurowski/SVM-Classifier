@@ -2,27 +2,22 @@
 #include <filesystem>
 #include <string>
 #include <opencv2/imgproc.hpp>
+#include "HelperStructs.h"
 
 
 using namespace std;
 using namespace cv;
+using namespace filesystem;
 
-
-struct ImageGroup
-{
-	Mat OriginalImage;
-	Mat Mask;
-	Mat BackgroundMask;
-};
 
 
 class ImageDataManager
 {
 public:
 	static Mat CalculateBackgroundMask(Mat& mat, int minMaskSize, int maxMaskSize);
-	static vector<filesystem::path> GetValidImageLists(string directoryPath, bool createBackgroundMasks = true);
-	static void SaveImage(const filesystem::path& imagePath, Mat sourceImage);
-	static ImageGroup FetchImages(const filesystem::path directoryPath, string imageName);
+	static vector<path> GetValidImageLists(path directoryPath, bool createBackgroundMasks = true);
+	static void SaveImage(const path& imagePath, Mat sourceImage);
+	static ImageGroup FetchImages(const path directoryPath, const path imageName);
 
 	/*static int InitialThreshold() { return initialThreshold; }
 	static void InitialThreshold(int _initialThreshold) { initialThreshold = _initialThreshold; }*/

@@ -71,7 +71,7 @@ Mat ImageDataManager::CalculateBackgroundMask(Mat& inputImg, int minMaskSize, in
 	return outputImage;
 }
 
-vector<path> ImageDataManager::GetValidImageLists(string inputDirectoryPath, bool createBackgroundMasks)
+vector<path> ImageDataManager::GetValidImageLists(path inputDirectoryPath, bool createBackgroundMasks)
 {
 	//todo find out why  "/" operator didnt work
 
@@ -147,11 +147,11 @@ void ImageDataManager::SaveImage(const path& imagePath, Mat imageToSave)
 
 }
 
-ImageGroup ImageDataManager::FetchImages(const path directoryPath, string imageName)
+ImageGroup ImageDataManager::FetchImages(const path directoryPath, const path imageName)
 {
 	ImageGroup fetchedImages;
 	auto directory = directoryPath;
-	auto filePath = "\\" + imageName;
+	auto filePath = "\\" + imageName.string();
 
 	auto imageFile = directory;
 	imageFile+= path(originalFramesDirectoryName) += path(filePath);
@@ -169,7 +169,7 @@ ImageGroup ImageDataManager::FetchImages(const path directoryPath, string imageN
 	backgroundMaskFile.replace_extension(".tif");
 	if ((!exists(backgroundMaskFile) || !is_regular_file(backgroundMaskFile)))  return fetchedImages;
 
-	fetchedImages.OriginalImage = imread(imageFile.string(), CV_LOAD_IMAGE_COLOR);
+	fetchedImages.Image = imread(imageFile.string(), CV_LOAD_IMAGE_COLOR);
 	fetchedImages.Mask = imread(maskFile.string(), CV_LOAD_IMAGE_GRAYSCALE);
 	fetchedImages.BackgroundMask = imread(backgroundMaskFile.string(), CV_LOAD_IMAGE_GRAYSCALE);
 	return fetchedImages;
