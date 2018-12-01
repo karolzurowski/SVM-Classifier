@@ -169,7 +169,7 @@ ImageGroup ImageDataManager::FetchImages(const path directoryPath, const path im
 	backgroundMaskFile.replace_extension(".tif");
 	if ((!exists(backgroundMaskFile) || !is_regular_file(backgroundMaskFile)))  return fetchedImages;
 
-	fetchedImages.Image = imread(imageFile.string(), CV_LOAD_IMAGE_COLOR);
+	fetchedImages.Image = imread(imageFile.string(), CV_LOAD_IMAGE_GRAYSCALE);
 	fetchedImages.Mask = imread(maskFile.string(), CV_LOAD_IMAGE_GRAYSCALE);
 	fetchedImages.BackgroundMask = imread(backgroundMaskFile.string(), CV_LOAD_IMAGE_GRAYSCALE);
 	return fetchedImages;

@@ -11,14 +11,33 @@ class ImageProcessorBase;
 class SVMClassifier
 {
 public:
-	SVMClassifier(std::unique_ptr<ImageProcessorBase>&& _imageProcessor);
+	SVMClassifier(unique_ptr<ImageProcessorBase> _imageProcessor);
+	SVMClassifier(unique_ptr<ImageProcessorBase> _imageProcessor, Mat bowDictionary);
+	SVMClassifier(unique_ptr<ImageProcessorBase> _imageProcessor, Mat bowDictionary, string svmPath);
 	bool AddTrainPath(const path& imagesDirectory);
+	void SaveDictionary(Mat dictionary);
+	Mat CreateBowDictionary();
 	void VisualizeClassification(const vector<float>& results) const;
 	vector<float> TestSVM(const path& testImage) const;
+	void VisualizeBOWClassification(vector<float> predictions) const;
+	vector<float> TestBOWSVM(const path& testImage) const;
 	void TrainSvm();
+	void TrainBowSVM();
+	Mat BowDictionary() const { return  hasBowDictionary ? bowDictionary : Mat(); }
+	void LoadSVM(const path& svmPath);
+
+	void BowDictionary(const Mat& bowDictionary)
+	{
+		this->bowDictionary = bowDictionary;
+		hasBowDictionary = true;
+	};
+
 
 private:
 	unique_ptr<ImageProcessorBase> imageProcessor;
 	unique_ptr<CvSVM> svm;
+	int patchScale = 20;
 	vector<ImagePath> trainPaths;
+	bool hasBowDictionary;
+	Mat bowDictionary;
 };
