@@ -147,7 +147,7 @@ void ImageDataManager::SaveImage(const path& imagePath, Mat imageToSave)
 
 }
 
-ImageGroup ImageDataManager::FetchImages(const path directoryPath, const path imageName)
+ImageGroup ImageDataManager::FetchImages(const path directoryPath, const path imageName,int flag)
 {
 	ImageGroup fetchedImages;
 	auto directory = directoryPath;
@@ -169,7 +169,7 @@ ImageGroup ImageDataManager::FetchImages(const path directoryPath, const path im
 	backgroundMaskFile.replace_extension(".tif");
 	if ((!exists(backgroundMaskFile) || !is_regular_file(backgroundMaskFile)))  return fetchedImages;
 
-	fetchedImages.Image = imread(imageFile.string(), CV_LOAD_IMAGE_GRAYSCALE);
+	fetchedImages.Image = imread(imageFile.string(), flag);
 	fetchedImages.Mask = imread(maskFile.string(), CV_LOAD_IMAGE_GRAYSCALE);
 	fetchedImages.BackgroundMask = imread(backgroundMaskFile.string(), CV_LOAD_IMAGE_GRAYSCALE);
 	return fetchedImages;

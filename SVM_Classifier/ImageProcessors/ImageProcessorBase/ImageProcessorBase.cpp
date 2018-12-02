@@ -1,5 +1,6 @@
 #include "ImageProcessorBase.h"
 #include <opencv2/highgui.hpp>
+#include <iostream>
 
 ImageProcessorBase::ImageProcessorBase(int meshGap, int meshWidth, int meshHeight) : imageWidth(meshWidth),
 imageHeight(meshHeight)
@@ -84,7 +85,6 @@ vector<KeyPoint> ImageProcessorBase::CalculateKeyPoints(const Mat& image) const
 	vector<Point> imagePoints;
 	Mat meshedImage;
 	multiply(image, mesh, meshedImage);
-	imwrite("mesehd.jpg", meshedImage);
 	findNonZero(meshedImage, imagePoints);
 	for (auto point : imagePoints)
 	{

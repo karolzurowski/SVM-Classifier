@@ -135,6 +135,7 @@
     <ClCompile Include="Helpers\ImageDataManager.cpp" />
     <ClCompile Include="ImageProcessors\ImageProcessor.cpp" />
     <ClCompile Include="ImageProcessors\ImageProcessorBase\ImageProcessorBase.cpp" />
+    <ClCompile Include="ImageProcessors\MultiChannelImageProcessor\MultiChannelImageProcessor.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="SVMClassifier\SVMClassifier.cpp" />
   </ItemGroup>
@@ -143,6 +144,7 @@
     <ClInclude Include="Helpers\ImageDataManager.h" />
     <ClInclude Include="ImageProcessors\ImageProcessor.h" />
     <ClInclude Include="ImageProcessors\ImageProcessorBase\ImageProcessorBase.h" />
+    <ClInclude Include="ImageProcessors\MultiChannelImageProcessor\MultiChannelImageProcessor.h" />
     <ClInclude Include="SVMClassifier\SVMClassifier.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

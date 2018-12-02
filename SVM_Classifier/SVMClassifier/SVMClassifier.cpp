@@ -91,12 +91,12 @@ void SVMClassifier::VisualizeClassification(const vector<float>& results) const
 	}
 
 	imshow("testResult", grid);
-	imwrite("SVM_CYLINDER_result.jpg", grid);
+	imwrite("SVM_result.jpg", grid);
 }
 
 vector<float>SVMClassifier::TestSVM(const path& testImage) const
 {
-	auto image = imread(testImage.string());
+	auto image = imread(testImage.string(),CV_LOAD_IMAGE_COLOR);
 	SiftFeatureDetector siftDetector;
 	auto processedImage = imageProcessor->ProcessImage(image);
 
@@ -231,7 +231,7 @@ void SVMClassifier::TrainSvm()
 	for (auto trainPath : trainPaths)
 	{
 		cout << "Calculating:\t" << trainPath.ImageFileName << endl;
-		auto imageGroup = ImageDataManager::FetchImages(trainPath.DirectoryPath, trainPath.ImageFileName);
+		auto imageGroup = ImageDataManager::FetchImages(trainPath.DirectoryPath, trainPath.ImageFileName,CV_LOAD_IMAGE_COLOR);
 		auto svmInput = imageProcessor->CalculateSVMInput(imageGroup);
 		svmData.push_back(svmInput.Data);
 		svmLabels.push_back(svmInput.Labels);

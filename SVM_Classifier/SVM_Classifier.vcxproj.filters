@@ -25,6 +25,9 @@
     <Filter Include="SVMClassifier">
       <UniqueIdentifier>{127af1f1-0c0d-42ab-85da-596c65f11ca7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ImageProcessors\MultiChannelImageProcessor">
+      <UniqueIdentifier>{b665bfa5-5f10-4340-bada-a551cae0be7f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -42,6 +45,9 @@
     <ClCompile Include="SVMClassifier\SVMClassifier.cpp">
       <Filter>SVMClassifier</Filter>
     </ClCompile>
+    <ClCompile Include="ImageProcessors\MultiChannelImageProcessor\MultiChannelImageProcessor.cpp">
+      <Filter>ImageProcessors\MultiChannelImageProcessor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Helpers\HelperStructs.h">
@@ -58,6 +64,9 @@
     </ClInclude>
     <ClInclude Include="SVMClassifier\SVMClassifier.h">
       <Filter>SVMClassifier</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageProcessors\MultiChannelImageProcessor\MultiChannelImageProcessor.h">
+      <Filter>ImageProcessors\MultiChannelImageProcessor</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

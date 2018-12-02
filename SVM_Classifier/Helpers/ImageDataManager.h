@@ -17,7 +17,7 @@ public:
 	static Mat CalculateBackgroundMask(Mat& mat, int minMaskSize, int maxMaskSize);
 	static vector<path> GetValidImageLists(path directoryPath, bool createBackgroundMasks = true);
 	static void SaveImage(const path& imagePath, Mat sourceImage);
-	static ImageGroup FetchImages(const path directoryPath, const path imageName);
+	static ImageGroup FetchImages(const path directoryPath, const path imageName,int flag = CV_LOAD_IMAGE_GRAYSCALE);
 
 	/*static int InitialThreshold() { return initialThreshold; }
 	static void InitialThreshold(int _initialThreshold) { initialThreshold = _initialThreshold; }*/

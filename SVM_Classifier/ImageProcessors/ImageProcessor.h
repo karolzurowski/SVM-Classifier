@@ -1,7 +1,5 @@
 #pragma once
 #include <opencv2/core/core.hpp>
-#include <opencv2/nonfree/features2d.hpp>
-#include "../Helpers/HelperStructs.h"
 #include "ImageProcessorBase/ImageProcessorBase.h"
 
 class ImageProcessor:public ImageProcessorBase
