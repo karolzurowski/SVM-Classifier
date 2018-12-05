@@ -10,6 +10,7 @@ SVM_Classifier/tests
 BackgroundMaskCreator/
 TEST_badminton
 *.jpg
+
 Test_Masks
 # User-specific files
 *.suo
