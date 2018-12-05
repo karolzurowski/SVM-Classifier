@@ -22,11 +22,14 @@
     <Filter Include="Helpers">
       <UniqueIdentifier>{60cd1c45-fde7-4284-a9c4-3d56335657f3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="SVMClassifier">
-      <UniqueIdentifier>{127af1f1-0c0d-42ab-85da-596c65f11ca7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ImageProcessors\MultiChannelImageProcessor">
       <UniqueIdentifier>{b665bfa5-5f10-4340-bada-a551cae0be7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ImageProcessors\LBPImageProcessor">
+      <UniqueIdentifier>{2e425109-7979-415c-9f4f-932ea6b0de7c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classifier">
+      <UniqueIdentifier>{127af1f1-0c0d-42ab-85da-596c65f11ca7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -42,11 +45,14 @@
     <ClCompile Include="Helpers\ImageDataManager.cpp">
       <Filter>Helpers</Filter>
     </ClCompile>
-    <ClCompile Include="SVMClassifier\SVMClassifier.cpp">
-      <Filter>SVMClassifier</Filter>
-    </ClCompile>
     <ClCompile Include="ImageProcessors\MultiChannelImageProcessor\MultiChannelImageProcessor.cpp">
       <Filter>ImageProcessors\MultiChannelImageProcessor</Filter>
+    </ClCompile>
+    <ClCompile Include="ImageProcessors\LBPImageProcessor\LBPImageProcessor.cpp">
+      <Filter>ImageProcessors\LBPImageProcessor</Filter>
+    </ClCompile>
+    <ClCompile Include="SVMClassifier\Classifier.cpp">
+      <Filter>Classifier</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -62,11 +68,14 @@
     <ClInclude Include="ImageProcessors\ImageProcessorBase\ImageProcessorBase.h">
       <Filter>ImageProcessors\ImageProcessorBase</Filter>
     </ClInclude>
-    <ClInclude Include="SVMClassifier\SVMClassifier.h">
-      <Filter>SVMClassifier</Filter>
-    </ClInclude>
     <ClInclude Include="ImageProcessors\MultiChannelImageProcessor\MultiChannelImageProcessor.h">
       <Filter>ImageProcessors\MultiChannelImageProcessor</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageProcessors\LBPImageProcessor\LBPImageProcessor.h">
+      <Filter>ImageProcessors\LBPImageProcessor</Filter>
+    </ClInclude>
+    <ClInclude Include="SVMClassifier\Classifier.h">
+      <Filter>Classifier</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

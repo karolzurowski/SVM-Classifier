@@ -8,24 +8,25 @@ MultiChannelImageProcessor::MultiChannelImageProcessor(int meshGap, int meshWidt
 {
 }
 
-Mat MultiChannelImageProcessor::ProcessImage(const Mat& image, const Mat& mask) const
+void MultiChannelImageProcessor::ProcessImage(const Mat& image, const Mat& mask,Mat& outputImage) const
 {
 	vector<Mat> channels(3);
-//	Mat imageHSV;
-//	cvtColor(image, imageHSV, CV_BGR2HSV);
-	split(image, channels);
+	Mat imageHSV;
+	cvtColor(image, imageHSV, CV_BGR2HSV);
+	split(imageHSV, channels);
 
 	vector<Mat> descriptors;
 	for (auto channel : channels)
 	{
-		descriptors.push_back(CalculateSIFT(channel, mask));
+		Mat channelDescriptors;
+		CalculateSIFT(channel, mask, channelDescriptors);
+
+		descriptors.push_back(channelDescriptors);
 	}
 
-	Mat mergeChannels = Mat(descriptors[0]);
+	outputImage = Mat(descriptors[0]);
 	for(int i=1;i<descriptors.size();i++)
-		hconcat(mergeChannels, descriptors[i], mergeChannels);
-
-	return mergeChannels;
+		hconcat(outputImage, descriptors[i], outputImage);
 
 
 

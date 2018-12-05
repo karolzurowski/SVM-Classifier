@@ -1,3 +1,4 @@
+#pragma once
 #include <opencv2/core/core.hpp>
 #include <opencv2/features2d/features2d.hpp>
 #include <opencv2/nonfree/features2d.hpp>
@@ -9,22 +10,23 @@ class ImageProcessorBase
 public:
 	ImageProcessorBase(int meshGap, int meshWidth, int meshHeight);
 
-	virtual SVMInput CalculateSVMInput(const ImageGroup & images)const;
-	virtual Mat ProcessImage(const Mat& image, const Mat& mask) const = 0;
-	virtual Mat ProcessImage(const Mat& image) const;	
+	virtual void CalculateSVMInput(const ImageGroup & images, SVMInput & svmInput)const;
+	virtual void ProcessImage(const Mat& image, const Mat& mask, Mat& outputImage) const = 0;
+	virtual void TestImage(const Mat& image, Mat& outputImage) const;
 	Mat CalculateLabels(const Mat& maskDescriptors, const Mat& backgroundMaskDescriptors) const;
 	vector<vector<KeyPoint>>  SplitAndCalculateKeyPoints(const Mat&image, const Mat& mask, int vectorLimit = 0) const;
 	Mat Mesh() const { return mesh; }
 	int RegionScale() const { return regionScale; }
+
 
 protected:
 	Mat mesh;
 	SiftFeatureDetector siftDetector;
 	int meshGap;
 
-	Mat CalculateSIFT(const Mat& image, const Mat& mask) const;
+	void CalculateSIFT(const Mat& image, const Mat& mask,   Mat& outputImage) const;
 
-	vector<KeyPoint> CalculateKeyPoints(const Mat& image) const;
+	void CalculateKeyPoints(const Mat& image, vector<KeyPoint>& keyPoints) const;
 	Mat CreateMesh(int meshGap, int meshWidth, int meshHeight) const;
 	int imageWidth;
 	int imageHeight;

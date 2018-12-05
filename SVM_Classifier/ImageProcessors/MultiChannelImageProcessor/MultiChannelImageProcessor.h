@@ -6,5 +6,5 @@ class MultiChannelImageProcessor:public ImageProcessorBase
 {
 public:
 	MultiChannelImageProcessor(int meshGap, int meshWidth, int meshHeight);
-	Mat ProcessImage(const Mat& image, const Mat& mask)const override;
+	void ProcessImage(const Mat& image, const Mat& mask,Mat& outputImage)const override;
 };

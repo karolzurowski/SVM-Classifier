@@ -9,9 +9,9 @@ ImageProcessor::ImageProcessor(int meshGap, int meshWidth, int meshHeight) : Ima
 {
 }
 
-Mat ImageProcessor::ProcessImage(const Mat& image, const Mat& mask)const
+void ImageProcessor::ProcessImage(const Mat& image, const Mat& mask, Mat& outputImage)const
 {	
-	return CalculateSIFT(image, mask);
+	return CalculateSIFT(image, mask,outputImage);
 }
 
 
