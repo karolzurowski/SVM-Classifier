@@ -6,7 +6,7 @@
 LBPImageProcessor::LBPImageProcessor(int meshGap, int meshWidth, int meshHeight) : ImageProcessorBase(
 	meshGap, meshWidth, meshHeight)
 {
-	regionScale = 5;
+	regionScale = 120;
 }
 
 void LBPImageProcessor::ProcessImage(const Mat& image, const Mat& mask, Mat& outputImage) const
@@ -41,7 +41,7 @@ void LBPImageProcessor::ProcessImage(const Mat& image, const Mat& mask, Mat& out
 	int regionHeight = imageHeight / regionScale;
 
 	float maxPoints = regionWidth * regionHeight;
-	int detectionThreshold = maxPoints * 0.3;
+	int detectionThreshold = maxPoints * 0.8;
 
 	vector<Mat> descriptors;
 	//for (int y = 0; y < (image.rows - regionHeight / 2); y += regionHeight / 2)

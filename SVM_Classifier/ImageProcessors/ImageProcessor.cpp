@@ -11,7 +11,9 @@ ImageProcessor::ImageProcessor(int meshGap, int meshWidth, int meshHeight) : Ima
 
 void ImageProcessor::ProcessImage(const Mat& image, const Mat& mask, Mat& outputImage)const
 {	
-	return CalculateSIFT(image, mask,outputImage);
+	Mat grayImg;
+	cvtColor(image, grayImg,CV_BGR2GRAY);
+	return CalculateSIFT(grayImg, mask,outputImage);
 }
 
 

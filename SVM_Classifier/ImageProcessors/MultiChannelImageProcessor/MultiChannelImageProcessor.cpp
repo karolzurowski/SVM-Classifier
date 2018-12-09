@@ -12,8 +12,8 @@ void MultiChannelImageProcessor::ProcessImage(const Mat& image, const Mat& mask,
 {
 	vector<Mat> channels(3);
 	Mat imageHSV;
-	cvtColor(image, imageHSV, CV_BGR2HSV);
-	split(imageHSV, channels);
+//	cvtColor(image, imageHSV, CV_BGR2HSV);
+	split(image, channels);
 
 	vector<Mat> descriptors;
 	for (auto channel : channels)

@@ -19,7 +19,7 @@ public:
 	Mat CreateBowDictionary();
 	void VisualizeClassification(const vector<float>& results) const;
 	vector<float> TestSVM(const path& testImage) const;
-	void VisualizeBOWClassification(vector<float> predictions) const;
+	void VisualizeBOWClassification(vector<float> predictions,Mat &outputImage) const;
 	vector<float> TestBOWSVM(const path& testImage) const;
 	void TrainSvm();
 	void TrainBowSVM();
@@ -42,4 +42,5 @@ private:
 	vector<ImagePath> trainPaths;
 	bool hasBowDictionary;
 	Mat bowDictionary;
+	KNearest knn;
 };
