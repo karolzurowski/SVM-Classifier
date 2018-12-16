@@ -17,7 +17,9 @@ void ImageProcessorBase::TestImage(const Mat& image, Mat& outputImage) const
 void ImageProcessorBase::CalculateSIFT(const Mat& image, const Mat& mask, Mat& outputImage) const
 {
 	vector<KeyPoint> keyPoints;
-	CalculateKeyPoints(mask,keyPoints);
+	
+	siftDetector.detect(image, keyPoints,mask);	
+	//CalculateKeyPoints(mask, keyPoints);
 	siftDetector.compute(image, keyPoints, outputImage);
 
 }
@@ -43,7 +45,7 @@ vector<vector<KeyPoint>> ImageProcessorBase::SplitAndCalculateKeyPoints(const Ma
 	int regionHeight = imageHeight / regionScale;
 
 	float maxPoints = (float)regionWidth / meshGap * regionHeight / meshGap;
-	int detectionThreshold = maxPoints * 0.8;
+	int detectionThreshold = maxPoints * 0.6;
 
 	vector<Mat> descriptors;
 
@@ -72,7 +74,7 @@ vector<vector<KeyPoint>> ImageProcessorBase::SplitAndCalculateKeyPoints(const Ma
 			//descriptors.push_back(processedRegion);
 			vector<KeyPoint> rectKeyPoints;
 			CalculateKeyPoints(rectMask, rectKeyPoints);
-			
+
 			keyPoints.push_back(rectKeyPoints);
 			if (vectorLimit > 0 && keyPoints.size() == vectorLimit)
 				return keyPoints;
@@ -82,21 +84,35 @@ vector<vector<KeyPoint>> ImageProcessorBase::SplitAndCalculateKeyPoints(const Ma
 	//	return descriptors;
 }
 
+void ImageProcessorBase::DrawResults(const vector<float>& results,  Mat& resultImage)
+{
+	resultImage = Mat(mesh);	
+	vector<Point> gridPoints;
+	findNonZero(resultImage, gridPoints);
+
+	for (int i = 0; i < results.size(); i++)
+	{
+		if (results[i] == 1)
+			resultImage.at<uchar>(gridPoints[i].y, gridPoints[i].x) = 255;
+		else
+			resultImage.at<uchar>(gridPoints[i].y, gridPoints[i].x) = 0;
+	}
+}
 
 
 void ImageProcessorBase::CalculateKeyPoints(const Mat& image, vector<KeyPoint>& keyPoints) const
 {
-		vector<Point> imagePoints;
+	vector<Point> imagePoints;
 	Mat meshedImage;
 	multiply(image, mesh, meshedImage);
 	findNonZero(meshedImage, imagePoints);
 	for (auto point : imagePoints)
 	{
 		keyPoints.push_back(KeyPoint(point, meshGap));
-	}	
+	}
 }
 
-void ImageProcessorBase::CalculateSVMInput(const ImageGroup& images,SVMInput& svmInput) const
+void ImageProcessorBase::CalculateSVMInput(const ImageGroup& images, SVMInput& svmInput) const
 {
 	//todo assert images not null
 
@@ -104,25 +120,26 @@ void ImageProcessorBase::CalculateSVMInput(const ImageGroup& images,SVMInput& sv
 	auto mask = images.Mask;
 	auto backgroundMask = images.BackgroundMask;
 
+
 	Mat maskDescriptors;
 	ProcessImage(image, mask, maskDescriptors);
 	Mat backgroundMaskDescriptors;
-	 ProcessImage(image, backgroundMask, backgroundMaskDescriptors);
+	ProcessImage(image, backgroundMask, backgroundMaskDescriptors);
 
 
 	Mat resizedBackgroundDescriptors = Mat(backgroundMaskDescriptors);
 	Mat resizedMaskDescriptors = Mat(maskDescriptors);
-	if (backgroundMaskDescriptors.rows > maskDescriptors.rows)
-	{
-		resizedBackgroundDescriptors = Mat(maskDescriptors.rows, maskDescriptors.cols, backgroundMaskDescriptors.type(), backgroundMaskDescriptors.data);
-		cout << "Changing background descriptors" << endl;
-		//	cout << backgroundMaskDescriptors1.type();
-	}
-	else if (maskDescriptors.rows > backgroundMaskDescriptors.rows)
-	{
-		resizedMaskDescriptors = Mat(backgroundMaskDescriptors.rows, backgroundMaskDescriptors.cols, maskDescriptors.type(), maskDescriptors.data);
-		cout << "Changing mask descriptors" << endl;
-	}
+	//if (backgroundMaskDescriptors.rows > maskDescriptors.rows)
+	//{
+	//	resizedBackgroundDescriptors = Mat(maskDescriptors.rows, maskDescriptors.cols, backgroundMaskDescriptors.type(), backgroundMaskDescriptors.data);
+	//	cout << "Changing background descriptors" << endl;
+	//	//	cout << backgroundMaskDescriptors1.type();
+	//}
+	//else if (maskDescriptors.rows > backgroundMaskDescriptors.rows)
+	//{
+	//	resizedMaskDescriptors = Mat(backgroundMaskDescriptors.rows, backgroundMaskDescriptors.cols, maskDescriptors.type(), maskDescriptors.data);
+	//	cout << "Changing mask descriptors" << endl;
+	//}
 
 	if (resizedBackgroundDescriptors.rows == resizedMaskDescriptors.rows)
 	{
@@ -137,7 +154,7 @@ void ImageProcessorBase::CalculateSVMInput(const ImageGroup& images,SVMInput& sv
 
 	svmInput.Data = descriptors;
 	svmInput.Labels = labelsToReturn;
-//	return SVMInput{ descriptors, labelsToReturn };
+	//	return SVMInput{ descriptors, labelsToReturn };
 }
 
 Mat ImageProcessorBase::CreateMesh(int meshGap, int meshWidth, int meshHeight) const

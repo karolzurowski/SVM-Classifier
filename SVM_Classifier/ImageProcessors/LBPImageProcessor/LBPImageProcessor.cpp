@@ -6,13 +6,14 @@
 LBPImageProcessor::LBPImageProcessor(int meshGap, int meshWidth, int meshHeight) : ImageProcessorBase(
 	meshGap, meshWidth, meshHeight)
 {
-	regionScale = 120;
+	regionScale = 10;
 }
 
 void LBPImageProcessor::ProcessImage(const Mat& image, const Mat& mask, Mat& outputImage) const
 {
-	//Mat_<float> histograms;
 
+	//Mat_<float> histograms;
+	outputImage.convertTo(outputImage, CV_32FC1);
 	//Mat lbpImage1;
 	/*CalculateLBP(image, lbpImage1);
 	imwrite("LBP_color.jpg", lbpImage1);*/
@@ -33,6 +34,11 @@ void LBPImageProcessor::ProcessImage(const Mat& image, const Mat& mask, Mat& out
 
 	Mat grayImage;
 	cvtColor(image, grayImage, CV_BGR2GRAY);
+
+	Mat thresholdedMask;
+	threshold(mask, thresholdedMask, 100, 255, THRESH_BINARY);
+
+
 	/*Mat lbpImage;
 	CalculateLBP(grayImage, lbpImage);
 	imwrite("LBP_gray.jpg", lbpImage);*/
@@ -41,17 +47,17 @@ void LBPImageProcessor::ProcessImage(const Mat& image, const Mat& mask, Mat& out
 	int regionHeight = imageHeight / regionScale;
 
 	float maxPoints = regionWidth * regionHeight;
-	int detectionThreshold = maxPoints * 0.8;
+	int detectionThreshold = maxPoints * 0.9;
 
 	vector<Mat> descriptors;
-	//for (int y = 0; y < (image.rows - regionHeight / 2); y += regionHeight / 2)
-	//{
-	//	for (int x = 0; x < (image.cols - regionWidth / 2); x += regionWidth / 2)
-	//	{
-	for (int y = 0; y < grayImage.rows ; y += regionHeight)
+	for (int y = 0; y < (image.rows - regionHeight / 2); y += regionHeight / 2)
 	{
-		for (int x = 0; x < (grayImage.cols - regionWidth / 2); x += regionWidth/2)
+		for (int x = 0; x < (image.cols - regionWidth / 2); x += regionWidth / 2)
 		{
+	/*for (int y = 0; y < grayImage.rows - regionHeight; y +=  +50)
+	{
+		for (int x = 0; x < grayImage.cols- regionWidth; x += 50)
+		{*/
 			Rect rect = Rect(x, y, regionWidth, regionHeight);
 			Mat rectMat(grayImage, rect);
 
@@ -59,12 +65,12 @@ void LBPImageProcessor::ProcessImage(const Mat& image, const Mat& mask, Mat& out
 			rectangle(rectMask, rect, Scalar(255, 255, 255), -1);
 
 
-			multiply(rectMask, mask, rectMask);
+			multiply(rectMask, thresholdedMask, rectMask);
 
 			int objectPoints = countNonZero(rectMask);
 
 			if (objectPoints < detectionThreshold) continue;
-				
+		
 			//Mat processedRegion = TestImage(image, rectMask);
 			Mat lbpImage;
 			//descriptors.push_back(processedRegion);
@@ -75,12 +81,40 @@ void LBPImageProcessor::ProcessImage(const Mat& image, const Mat& mask, Mat& out
 			//histograms.push_back(histogram);
 			outputImage.push_back(histogram);
 		}
-	}	
+	
+	}
+}
+
+void LBPImageProcessor::DrawResults(const vector<float>& results, Mat& mat)
+{
+	int regionWidth = imageWidth / regionScale;
+	int regionHeight = imageHeight / regionScale;
+	mat = Mat::zeros(1080, 1920, CV_8UC1);
+	Scalar scalar;
+	int index = 0;
+	for (int y = 0; y < (mat.rows - regionHeight / 2); y += regionHeight / 2)
+	{
+		for (int x = 0; x < (mat.cols - regionWidth / 2); x += regionWidth / 2)
+		{
+			Rect rect = Rect(x, y, regionWidth, regionHeight);
+			if (results[index++] == 1)
+				scalar = Scalar(255, 255, 255);
+			else
+				scalar = Scalar(0, 0, 0);
+
+			rectangle(mat, rect, scalar, -1);
+		}
+	}
+
 }
 
 void LBPImageProcessor::TestImage(const Mat& image, Mat & outputImage) const
 {
+	cout << "testing image..." << endl;
+	outputImage.convertTo(outputImage, CV_8UC1);
 	//Mat_<float> histograms;
+
+
 
 	Mat defaultMask = Mat::zeros(1080, 1920, CV_8UC1);
 	defaultMask.setTo(cv::Scalar(255, 255, 255));
@@ -94,17 +128,16 @@ void LBPImageProcessor::TestImage(const Mat& image, Mat & outputImage) const
 	int regionWidth = imageWidth / regionScale;
 	int regionHeight = imageHeight / regionScale;
 
-	float maxPoints = regionWidth * regionHeight;
-	int detectionThreshold = maxPoints * 0.8;
+	
 
 	vector<Mat> descriptors;
 	//for (int y = 0; y < (image.rows - regionHeight / 2); y += regionHeight / 2)
 	//{
 	//	for (int x = 0; x < (image.cols - regionWidth / 2); x += regionWidth / 2)
 	//	{
-	for (int y = 0; y < grayImage.rows; y += regionHeight )
+	for (int y = 0; y < (image.rows - regionHeight / 2); y += regionHeight / 2)
 	{
-		for (int x = 0; x < grayImage.cols; x += regionWidth)
+		for (int x = 0; x < (image.cols - regionWidth / 2); x += regionWidth / 2)
 		{
 			Rect rect = Rect(x, y, regionWidth, regionHeight);
 			Mat rectMat(grayImage, rect);
@@ -115,12 +148,12 @@ void LBPImageProcessor::TestImage(const Mat& image, Mat & outputImage) const
 
 			multiply(rectMask, defaultMask, rectMask);
 
-			int objectPoints = countNonZero(rectMask);
+		
 
-			if (objectPoints < detectionThreshold) continue;
-
+			//	!!!!!!!!!!!!!!!!	//	if (objectPoints < detectionThreshold) continue;
 			
-			//Mat processedRegion = TestImage(image, rectMask);
+
+						//Mat processedRegion = TestImage(image, rectMask);
 			Mat lbpImage;
 			//descriptors.push_back(processedRegion);
 			CalculateLBP(rectMat, lbpImage);
@@ -128,6 +161,7 @@ void LBPImageProcessor::TestImage(const Mat& image, Mat & outputImage) const
 			CalculateHistogram(lbpImage, histogram, 256);
 			//	cout << histogram << endl;
 			outputImage.push_back(histogram);
+			
 		}
 	}
 }
@@ -136,11 +170,11 @@ void LBPImageProcessor::TestImage(const Mat& image, Mat & outputImage) const
 
 void LBPImageProcessor::CalculateHistogram(const Mat& src, Mat& hist, int numPatterns) const
 {
-	hist = Mat::zeros(1, numPatterns, CV_32FC1);
+	hist = Mat::zeros(1, numPatterns, CV_8UC1);
 	for (int i = 0; i < src.rows; i++) {
 		for (int j = 0; j < src.cols; j++) {
 			int bin = src.at<uchar>(i, j);
-			hist.at<float>(0, bin) += 1;
+			hist.at<uchar>(0, bin) += 1;
 		}
 	}
 }

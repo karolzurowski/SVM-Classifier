@@ -14,28 +14,49 @@ using namespace std;
 int main(int argc, char **argv)
 {
 	try
-	{/*
-			Mat dictionary;
+	{
+		/*	Mat dictionary;
 			FileStorage fs("dictionary.yml", FileStorage::READ);
 			fs["vocabulary"] >> dictionary;
 			fs.release();*/
-		Classifier classifier(make_unique<LBPImageProcessor>(5, 1920, 1080));
-		//	svm.LoadSVM("BOWSVM_80%_scale20.xml");
 
-		classifier.AddTrainPath("C:\\Users\\karol\\OneDrive\\Dokumenty\\Dataset_Zakrzowek\\Training_data\\small\\one_racket");
+
+
+		Mat data;
+		FileStorage fs("LBP_overlapp_data.xml", FileStorage::READ);
+		fs["LBP_overlapp_data"] >> data;
+		fs.release();
+
+		Mat label;
+		FileStorage fs1("LBP_overlapp_label.xml", FileStorage::READ);
+		fs1["LBP_overlapp_label"] >> label;
+		fs1.release();
+
+	
+
+
+
+		Classifier classifier(make_unique<LBPImageProcessor>(5, 1920, 1080));
+		classifier.LoadSVM("SVM_LBP.xml");
+
+	//	classifier.LoadData(data, label);
+
+	//	classifier.AddTrainPath("C:\\Users\\karol\\OneDrive\\Dokumenty\\Dataset_Zakrzowek\\Training_data\\metal_cylinder_2");
 		//	svm.TrainBowSVM();
 		//	svm.CreateBowDictionary();
-		classifier.TrainSvm();
+	//	classifier.TrainSvm();
 		//	auto results = svm.TestSVM("C:\\Users\\karol\\OneDrive\\Dokumenty\\Visual Studio 2017\\Projects\\SVM_Classifier\\metal_cylinder0448.jpg");
 			//svm.VisualizeClassification(results);
-		auto results = classifier.TestSVM("C:\\Users\\karol\\OneDrive\\Dokumenty\\Dataset_Zakrzowek\\Training_data\\small\\one_racket\\Original_Frames\\badminton_racket_0149.jpg");
-		Mat testMat;
-		classifier.VisualizeBOWClassification(results,testMat);
-
-		imshow("!!!", testMat);
-		imwrite("LBP_RAW_KNN_120_racket_one.jpg", testMat);
+		string testImagePath = "C:\\Users\\karol\\OneDrive\\Dokumenty\\Dataset_Zakrzowek\\Training_data\\metal_cylinder_2\\Original_Frames\\metal_cylinder0366.jpg";
+		auto results = classifier.TestSVM(testImagePath);
+  		Mat testMat;
+	//	classifier.VisualizeBOWClassification(results,testMat);
+		classifier.VisualizeClassification(results,testMat);
+		namedWindow("win", CV_WINDOW_NORMAL);
+		imshow("win", testMat);
+		imwrite("LBP_overlapp50_scale5_thresh09.jpg", testMat);
 		waitKey();
-	//	classifier.VisualizeClassification(results);
+		
 
 
 			//auto results=  svm.TestBOWSVM("C:\\Users\\karol\\OneDrive\\Dokumenty\\Visual Studio 2017\\Projects\\SVM_Classifier\\badminton.jpg");

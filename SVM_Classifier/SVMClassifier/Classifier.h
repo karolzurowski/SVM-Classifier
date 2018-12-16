@@ -17,22 +17,22 @@ public:
 	bool AddTrainPath(const path& imagesDirectory);
 	void SaveDictionary(Mat dictionary);
 	Mat CreateBowDictionary();
-	void VisualizeClassification(const vector<float>& results) const;
+	void TrainSvm(Mat svmData, Mat_<float> svmLabels);
+	void VisualizeClassification(const vector<float>& results, Mat &outputImage) const;
 	vector<float> TestSVM(const path& testImage) const;
-	void VisualizeBOWClassification(vector<float> predictions,Mat &outputImage) const;
-	vector<float> TestBOWSVM(const path& testImage) const;
+	//void VisualizeBOWClassification(vector<float> predictions,Mat &outputImage) const;
+	//vector<float> TestBOWSVM(const path& testImage) const;
 	void TrainSvm();
 	void TrainBowSVM();
 	Mat BowDictionary() const { return  hasBowDictionary ? bowDictionary : Mat(); }
 	void LoadSVM(const path& svmPath);
-
 	void BowDictionary(const Mat& bowDictionary)
 	{
 		this->bowDictionary = bowDictionary;
 		hasBowDictionary = true;
 	}
 
-	void VisualizeClassificationRect(const vector<float>& results);;
+	void LoadData(const Mat& data, const Mat& label);
 
 
 private:

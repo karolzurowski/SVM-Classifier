@@ -17,6 +17,7 @@ public:
 	vector<vector<KeyPoint>>  SplitAndCalculateKeyPoints(const Mat&image, const Mat& mask, int vectorLimit = 0) const;
 	Mat Mesh() const { return mesh; }
 	int RegionScale() const { return regionScale; }
+	virtual void DrawResults(const vector<float>& results,  Mat& mat);
 
 
 protected:
@@ -30,7 +31,7 @@ protected:
 	Mat CreateMesh(int meshGap, int meshWidth, int meshHeight) const;
 	int imageWidth;
 	int imageHeight;
-	int regionScale = 20;
+	int regionScale = 5;
 
 
 
