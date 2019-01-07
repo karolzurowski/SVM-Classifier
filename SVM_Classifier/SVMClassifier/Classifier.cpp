@@ -2,6 +2,7 @@
 #include <opencv2/highgui.hpp>
 #include "../Helpers/ImageDataManager.h"
 #include "../ImageProcessors/ImageProcessorBase/ImageProcessorBase.h"
+#include <numeric>
 using namespace std;
 using namespace filesystem;
 
@@ -32,7 +33,7 @@ bool Classifier::AddTrainPath(const path& path)
 	{
 		for (auto validImage : validImages)
 		{
-			trainPaths.push_back(ImagePath{path, validImage.filename()});
+			trainPaths.push_back(ImagePath{ path, validImage.filename() });
 		}
 		return true;
 	}
@@ -40,9 +41,77 @@ bool Classifier::AddTrainPath(const path& path)
 	return false;
 }
 
+bool Classifier::AddTestPath(const path& path)
+{
+	auto validImages = ImageDataManager::GetValidImageLists(path);
+	if (!validImages.empty())
+	{
+		for (auto validImage : validImages)
+		{
+			testPaths.push_back(ImagePath{ path, validImage.filename() });
+		}
+		return true;
+	}
+
+	return false;
+}
+
+void Classifier::TestImages()
+{
+	vector<float> precisions;
+	vector<float> recalls;
+
+
+	for (auto testPath : testPaths)
+	{
+		cout << "testing:\t" << testPath.ImageFileName << endl;
+		auto imageGroup = ImageDataManager::FetchImages(testPath.DirectoryPath, testPath.ImageFileName,
+			CV_LOAD_IMAGE_COLOR);
+
+		auto results = TestImage(imageGroup.Image);
+		Mat resultImage;
+		imageProcessor->DrawResults(results, resultImage);
+
+		
+		Mat mesh = imageProcessor->Mesh();
+		Mat meshedMask;
+		multiply(imageGroup.Mask, mesh, meshedMask);
+		
+
+		Mat truePositivesImage;
+		multiply(resultImage, imageGroup.Mask, truePositivesImage);
+		Mat invertedMask;
+		bitwise_not(imageGroup.Mask, invertedMask);
+		Mat falsePositivesImage;
+		multiply(invertedMask, resultImage, falsePositivesImage);
+
+		int truePositives = countNonZero(truePositivesImage);
+		int falsePositives = countNonZero(falsePositivesImage); 
+		int relevantElements = countNonZero(meshedMask);
+
+		float precision = (float)truePositives / (truePositives + falsePositives);
+		float recall = (float)truePositives / relevantElements;
+
+		precisions.push_back(precision);
+		recalls.push_back(recall);
+
+		cout << "Precision\t" + std::to_string(precision) + "\tRecall:\t" + std::to_string(recall)<<endl;
+
+	/*	imwrite("result.jpg", resultImage);
+		imwrite("mask.jpg", imageGroup.Mask);
+		imwrite("true_positive.jpg", truePositivesImage);
+		imwrite("false_positive.jpg", falsePositivesImage);*/
+
+	}
+
+	float averagePrecision = std::accumulate(precisions.begin(), precisions.end(), 0.0) / precisions.size();
+	float averageRecall = std::accumulate(recalls.begin(), recalls.end(), 0.0) / recalls.size();
+
+}
+
 void Classifier::SaveDictionary(Mat dictionary)
 {
-	FileStorage fs("dictionary.yml", FileStorage::WRITE);
+	FileStorage fs("cylinder_dict.yml", FileStorage::WRITE);
 	fs << "vocabulary" << dictionary;
 	fs.release();
 }
@@ -54,14 +123,14 @@ Mat Classifier::CreateBowDictionary()
 	for (auto trainPath : trainPaths)
 	{
 		cout << "Processing:\t" << trainPath.ImageFileName << endl;
-		auto imageGroup = ImageDataManager::FetchImages(trainPath.DirectoryPath, trainPath.ImageFileName);
+		auto imageGroup = ImageDataManager::FetchImages(trainPath.DirectoryPath, trainPath.ImageFileName, CV_LOAD_IMAGE_COLOR);
 		SVMInput processedImage;
 		imageProcessor->CalculateSVMInput(imageGroup, processedImage);
 		features.push_back(processedImage.Data);
 	}
 	int dictionarySize = 200;
 	//define Term Criteria
-	TermCriteria tc(CV_TERMCRIT_ITER, 100, 0.001);
+	TermCriteria tc(CV_TERMCRIT_EPS, 10000, 1e-9);
 	//retries number
 	int retries = 1;
 	//necessary flags
@@ -82,26 +151,21 @@ void Classifier::TrainSvm(Mat svmData, Mat_<float> svmLabels)
 	CvSVMParams params;
 	params.svm_type = CvSVM::C_SVC;
 	params.kernel_type = CvSVM::RBF;
-	params.term_crit = cvTermCriteria(CV_TERMCRIT_EPS, 100000 , 1e-9);
-	params.gamma = 1; // for poly/rbf/sigmoid
-	params.C = 1;
-	
-
+	params.term_crit = cvTermCriteria(CV_TERMCRIT_ITER, 1000, 1e-1);
+	//params.gamma = 100; // for poly/rbf/sigmoid 
+	//params.C =100; 
 	//CvSVMParams params;
 	//params.svm_type = CvSVM::C_SVC;
 	//params.kernel_type = CvSVM::RBF;
 	//params.term_crit = cvTermCriteria(CV_TERMCRIT_ITER, 10000, 1e-6);
 	//params.gamma = 0.0001; // for poly/rbf/sigmoid
 
-
-
 	cout << "Training svm" << endl;
-	svm->train(svmData, svmLabels, Mat(), Mat(), params);
+	svm->train_auto(svmData, svmLabels, Mat(), Mat(), params, 2);
 
-//	svm->train_auto()
-//	knn = KNearest();
-	//knn.train(svmData, svmLabels);
-
+	//	svm->train_auto()
+	//	knn = KNearest();
+//knn.train(svmData, svmLabels);
 	cout << "Saving svm";
 	svm->save("SVM_LBP.xml");
 }
@@ -115,7 +179,7 @@ void Classifier::TrainSvm()
 	{
 		cout << "Calculating:\t" << trainPath.ImageFileName << endl;
 		auto imageGroup = ImageDataManager::FetchImages(trainPath.DirectoryPath, trainPath.ImageFileName,
-		                                                CV_LOAD_IMAGE_COLOR);
+			CV_LOAD_IMAGE_COLOR);
 		SVMInput svmInput;
 		imageProcessor->CalculateSVMInput(imageGroup, svmInput);
 		svmData.push_back(svmInput.Data);
@@ -124,24 +188,27 @@ void Classifier::TrainSvm()
 
 	svmData.convertTo(svmData, CV_32FC1);
 	svmLabels.convertTo(svmLabels, CV_32FC1);
-	TrainSvm(svmData, svmLabels);
-	/*knn = CvKNearest();
-	knn.train(svmData, svmLabels);*/
+
 
 	try
 	{
 		cout << "Saving data for later :)";
-		FileStorage fs("LBP_overlapp_data.xml", FileStorage::WRITE);
-		fs << "LBP_overlapp_data" << svmData;
+		FileStorage fs("SIFT_cylinder_data.xml", FileStorage::WRITE);
+		fs << "SIFT_cylinder_data" << svmData;
 		fs.release();
 
-		fs = FileStorage("LBP_overlapp_label.xml", FileStorage::WRITE);
-		fs << "LBP_overlapp_label" << svmLabels;
+		fs = FileStorage("SIFT_cylinder_label.xml", FileStorage::WRITE);
+		fs << "SIFT_cylinder_label" << svmLabels;
 		fs.release();
 	}
 	catch (...)
 	{
 	}
+	TrainSvm(svmData, svmLabels);
+	/*knn = CvKNearest();
+	knn.train(svmData, svmLabels);*/
+
+
 }
 
 void Classifier::TrainBowSVM()
@@ -198,9 +265,9 @@ void Classifier::TrainBowSVM()
 */
 
 
-		/*auto svmInput = imageProcessor->CalculateSVMInput(imageGroup);
-		svmData.push_back(svmInput.Data);
-		svmLabels.push_back(svmInput.Labels);*/
+/*auto svmInput = imageProcessor->CalculateSVMInput(imageGroup);
+svmData.push_back(svmInput.Data);
+svmLabels.push_back(svmInput.Labels);*/
 	}
 
 	try
@@ -220,7 +287,7 @@ void Classifier::TrainBowSVM()
 	}
 
 
-	
+
 
 
 	CvSVMParams params;
@@ -234,12 +301,12 @@ void Classifier::TrainBowSVM()
 	svm->save("BOWSVM_80%_scale20.xml");
 }
 
-vector<float> Classifier::TestSVM(const path& testImage) const
+vector<float> Classifier::TestImage(const Mat& testImage) const
 {
 	vector<float> results;
-	auto image = imread(testImage.string(), CV_LOAD_IMAGE_COLOR);
+
 	Mat processedImage;
-	imageProcessor->TestImage(image, processedImage);
+	imageProcessor->ClassifyImage(testImage, processedImage);
 	processedImage.convertTo(processedImage, CV_32FC1);
 	//vector<float> results;
 	//for (int i = 0; i < processedImage.rows; i++)
@@ -258,7 +325,7 @@ vector<float> Classifier::TestSVM(const path& testImage) const
 	/*vector<KeyPoint> keyPoints;
 	siftDetector.detect(image, keyPoints);
 	siftDetector.compute(image, keyPoints, descriptors);*/
-//	Mat results = Mat::zeros(1080, 1920, CV_8UC1);
+	//	Mat results = Mat::zeros(1080, 1920, CV_8UC1);
 	for (int i = 0; i < processedImage.rows; i++)
 	{
 		Mat row = processedImage.row(i);
@@ -273,8 +340,8 @@ vector<float> Classifier::TestSVM(const path& testImage) const
 			results.at<uchar>(keyPoints[i].pt.y, keyPoints[i].pt.x) = 0;		*/
 	}
 
-	
-	
+
+
 	return results;
 }
 
@@ -332,12 +399,16 @@ vector<float> Classifier::TestSVM(const path& testImage) const
 //	return predictions;
 //}
 
+
+
+
+
 void Classifier::VisualizeClassification(const vector<float>& results, Mat &outputImage) const
 {
 	Mat resultImage;
-	imageProcessor->DrawResults(results,resultImage);
+	imageProcessor->DrawResults(results, resultImage);
 	outputImage = resultImage;
-	
+
 	//imshow("testResult", resultImage);
 	//imwrite("knn_result1.jpg", resultImage);
 }

@@ -6,7 +6,7 @@
 LBPImageProcessor::LBPImageProcessor(int meshGap, int meshWidth, int meshHeight) : ImageProcessorBase(
 	meshGap, meshWidth, meshHeight)
 {
-	regionScale = 10;
+	regionScale = 20;
 }
 
 void LBPImageProcessor::ProcessImage(const Mat& image, const Mat& mask, Mat& outputImage) const
@@ -71,7 +71,7 @@ void LBPImageProcessor::ProcessImage(const Mat& image, const Mat& mask, Mat& out
 
 			if (objectPoints < detectionThreshold) continue;
 		
-			//Mat processedRegion = TestImage(image, rectMask);
+			//Mat processedRegion = ClassifyImage(image, rectMask);
 			Mat lbpImage;
 			//descriptors.push_back(processedRegion);
 			CalculateLBP(rectMat, lbpImage);
@@ -92,9 +92,9 @@ void LBPImageProcessor::DrawResults(const vector<float>& results, Mat& mat)
 	mat = Mat::zeros(1080, 1920, CV_8UC1);
 	Scalar scalar;
 	int index = 0;
-	for (int y = 0; y < (mat.rows - regionHeight / 2); y += regionHeight / 2)
+	for (int y = 0; y < (mat.rows - regionHeight/2 ); y += regionHeight / 2)
 	{
-		for (int x = 0; x < (mat.cols - regionWidth / 2); x += regionWidth / 2)
+		for (int x = 0; x < (mat.cols - regionWidth/2 ); x += regionWidth / 2)
 		{
 			Rect rect = Rect(x, y, regionWidth, regionHeight);
 			if (results[index++] == 1)
@@ -108,7 +108,7 @@ void LBPImageProcessor::DrawResults(const vector<float>& results, Mat& mat)
 
 }
 
-void LBPImageProcessor::TestImage(const Mat& image, Mat & outputImage) const
+void LBPImageProcessor::ClassifyImage(const Mat& image, Mat & outputImage) const
 {
 	cout << "testing image..." << endl;
 	outputImage.convertTo(outputImage, CV_8UC1);
@@ -121,6 +121,7 @@ void LBPImageProcessor::TestImage(const Mat& image, Mat & outputImage) const
 
 	Mat grayImage;
 	cvtColor(image, grayImage, CV_BGR2GRAY);
+
 	/*Mat lbpImage;
 	CalculateLBP(grayImage, lbpImage);
 	imwrite("LBP_gray.jpg", lbpImage);*/
@@ -135,9 +136,9 @@ void LBPImageProcessor::TestImage(const Mat& image, Mat & outputImage) const
 	//{
 	//	for (int x = 0; x < (image.cols - regionWidth / 2); x += regionWidth / 2)
 	//	{
-	for (int y = 0; y < (image.rows - regionHeight / 2); y += regionHeight / 2)
+	for (int y = 0; y < (image.rows - regionHeight/2 ); y += regionHeight / 2)
 	{
-		for (int x = 0; x < (image.cols - regionWidth / 2); x += regionWidth / 2)
+		for (int x = 0; x < (image.cols - regionWidth/2 ); x += regionWidth / 2)
 		{
 			Rect rect = Rect(x, y, regionWidth, regionHeight);
 			Mat rectMat(grayImage, rect);
@@ -153,7 +154,7 @@ void LBPImageProcessor::TestImage(const Mat& image, Mat & outputImage) const
 			//	!!!!!!!!!!!!!!!!	//	if (objectPoints < detectionThreshold) continue;
 			
 
-						//Mat processedRegion = TestImage(image, rectMask);
+						//Mat processedRegion = ClassifyImage(image, rectMask);
 			Mat lbpImage;
 			//descriptors.push_back(processedRegion);
 			CalculateLBP(rectMat, lbpImage);
@@ -164,6 +165,8 @@ void LBPImageProcessor::TestImage(const Mat& image, Mat & outputImage) const
 			
 		}
 	}
+
+	
 }
 
 

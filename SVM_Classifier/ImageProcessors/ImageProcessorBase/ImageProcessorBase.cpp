@@ -9,8 +9,8 @@ imageHeight(meshHeight)
 	mesh = CreateMesh(meshGap, meshWidth, meshHeight);
 }
 
-void ImageProcessorBase::TestImage(const Mat& image, Mat& outputImage) const
-{
+void ImageProcessorBase::ClassifyImage(const Mat& image, Mat& outputImage) const
+{	
 	ProcessImage(image, mesh, outputImage);
 }
 
@@ -18,8 +18,8 @@ void ImageProcessorBase::CalculateSIFT(const Mat& image, const Mat& mask, Mat& o
 {
 	vector<KeyPoint> keyPoints;
 	
-	siftDetector.detect(image, keyPoints,mask);	
-	//CalculateKeyPoints(mask, keyPoints);
+	//siftDetector.detect(image, keyPoints,mask);	
+	CalculateKeyPoints(mask, keyPoints);
 	siftDetector.compute(image, keyPoints, outputImage);
 
 }
@@ -69,7 +69,7 @@ vector<vector<KeyPoint>> ImageProcessorBase::SplitAndCalculateKeyPoints(const Ma
 
 			if (objectPoints < detectionThreshold) continue;
 
-			//Mat processedRegion = TestImage(image, rectMask);
+			//Mat processedRegion = ClassifyImage(image, rectMask);
 
 			//descriptors.push_back(processedRegion);
 			vector<KeyPoint> rectKeyPoints;
@@ -86,7 +86,9 @@ vector<vector<KeyPoint>> ImageProcessorBase::SplitAndCalculateKeyPoints(const Ma
 
 void ImageProcessorBase::DrawResults(const vector<float>& results,  Mat& resultImage)
 {
-	resultImage = Mat(mesh);	
+	
+	
+	resultImage = mesh.clone();
 	vector<Point> gridPoints;
 	findNonZero(resultImage, gridPoints);
 
@@ -104,7 +106,7 @@ void ImageProcessorBase::CalculateKeyPoints(const Mat& image, vector<KeyPoint>& 
 {
 	vector<Point> imagePoints;
 	Mat meshedImage;
-	multiply(image, mesh, meshedImage);
+	multiply(image, mesh, meshedImage);	
 	findNonZero(meshedImage, imagePoints);
 	for (auto point : imagePoints)
 	{
@@ -120,7 +122,7 @@ void ImageProcessorBase::CalculateSVMInput(const ImageGroup& images, SVMInput& s
 	auto mask = images.Mask;
 	auto backgroundMask = images.BackgroundMask;
 
-
+	
 	Mat maskDescriptors;
 	ProcessImage(image, mask, maskDescriptors);
 	Mat backgroundMaskDescriptors;

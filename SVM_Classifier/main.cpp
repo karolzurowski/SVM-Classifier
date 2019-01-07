@@ -21,41 +21,48 @@ int main(int argc, char **argv)
 			fs.release();*/
 
 
+		int a = 5;
+		int b = 3;
+		double result = (double)a / (a + b);
 
-		Mat data;
-		FileStorage fs("LBP_overlapp_data.xml", FileStorage::READ);
-		fs["LBP_overlapp_data"] >> data;
-		fs.release();
 
-		Mat label;
-		FileStorage fs1("LBP_overlapp_label.xml", FileStorage::READ);
-		fs1["LBP_overlapp_label"] >> label;
-		fs1.release();
+		//Mat data;
+		//FileStorage fs("LBP_overlapp_data.xml", FileStorage::READ);
+		//fs["LBP_overlapp_data"] >> data;
+		//fs.release();
+
+		//Mat label;
+		//FileStorage fs1("LBP_overlapp_label.xml", FileStorage::READ);
+		//fs1["LBP_overlapp_label"] >> label;
+		//fs1.release();
 
 	
 
 
 
-		Classifier classifier(make_unique<LBPImageProcessor>(5, 1920, 1080));
-		classifier.LoadSVM("SVM_LBP.xml");
+		Classifier classifier(make_unique<ImageProcessor>(10, 1920, 1080));
+		//classifier.LoadSVM("SVM_LBP.xml");
 
 	//	classifier.LoadData(data, label);
-
-	//	classifier.AddTrainPath("C:\\Users\\karol\\OneDrive\\Dokumenty\\Dataset_Zakrzowek\\Training_data\\metal_cylinder_2");
+//
+		//classifier.AddTrainPath("C:\\Users\\karol\\OneDrive\\Dokumenty\\Dataset_Zakrzowek\\Training_data\\small\\one_cylinder");
+		classifier.AddTrainPath("C:\\Users\\karol\\OneDrive\\Dokumenty\\Dataset_Zakrzowek\\Training_data\\small\\badminton_racket");
+		classifier.AddTestPath("C:\\Users\\karol\\OneDrive\\Dokumenty\\Dataset_Zakrzowek\\Training_data\\small\\one_racket");
 		//	svm.TrainBowSVM();
-		//	svm.CreateBowDictionary();
-	//	classifier.TrainSvm();
-		//	auto results = svm.TestSVM("C:\\Users\\karol\\OneDrive\\Dokumenty\\Visual Studio 2017\\Projects\\SVM_Classifier\\metal_cylinder0448.jpg");
-			//svm.VisualizeClassification(results);
-		string testImagePath = "C:\\Users\\karol\\OneDrive\\Dokumenty\\Dataset_Zakrzowek\\Training_data\\metal_cylinder_2\\Original_Frames\\metal_cylinder0366.jpg";
-		auto results = classifier.TestSVM(testImagePath);
-  		Mat testMat;
-	//	classifier.VisualizeBOWClassification(results,testMat);
-		classifier.VisualizeClassification(results,testMat);
-		namedWindow("win", CV_WINDOW_NORMAL);
-		imshow("win", testMat);
-		imwrite("LBP_overlapp50_scale5_thresh09.jpg", testMat);
-		waitKey();
+	//	classifier.CreateBowDictionary();
+		classifier.TrainSvm();
+		classifier.TestImages();
+		
+		string testImagePath = "C:\\Users\\karol\\OneDrive\\Dokumenty\\Dataset_Zakrzowek\\Training_data\\small\\one_racket\\Original_Frames\\badminton_racket_0149.jpg";
+	//	//string testImagePath1 = "C:\\Users\\karol\\Desktop\\metal_cylinder0306.jpg";
+	//	//auto results = classifier.TestImage(testImagePath);
+ // 		Mat testMat;
+	////	classifier.VisualizeBOWClassification(results,testMat);
+	////	classifier.VisualizeClassification(results,testMat);
+	//	namedWindow("win", CV_WINDOW_NORMAL);
+	//	imshow("win", testMat);
+	//	imwrite("SIFT_cylinder.jpg", testMat);
+	//	waitKey();
 		
 
 

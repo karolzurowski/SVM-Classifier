@@ -12,7 +12,7 @@ public:
 
 	virtual void CalculateSVMInput(const ImageGroup & images, SVMInput & svmInput)const;
 	virtual void ProcessImage(const Mat& image, const Mat& mask, Mat& outputImage) const = 0;
-	virtual void TestImage(const Mat& image, Mat& outputImage) const;
+	virtual void ClassifyImage(const Mat& image, Mat& outputImage) const;
 	Mat CalculateLabels(const Mat& maskDescriptors, const Mat& backgroundMaskDescriptors) const;
 	vector<vector<KeyPoint>>  SplitAndCalculateKeyPoints(const Mat&image, const Mat& mask, int vectorLimit = 0) const;
 	Mat Mesh() const { return mesh; }
@@ -31,7 +31,7 @@ protected:
 	Mat CreateMesh(int meshGap, int meshWidth, int meshHeight) const;
 	int imageWidth;
 	int imageHeight;
-	int regionScale = 5;
+	int regionScale;
 
 
 

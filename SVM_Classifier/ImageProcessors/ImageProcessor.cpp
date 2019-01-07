@@ -13,7 +13,9 @@ void ImageProcessor::ProcessImage(const Mat& image, const Mat& mask, Mat& output
 {	
 	Mat grayImg;
 	cvtColor(image, grayImg,CV_BGR2GRAY);
-	return CalculateSIFT(grayImg, mask,outputImage);
+	Mat thresholdedMask;
+	threshold(mask, thresholdedMask, 100, 255, THRESH_BINARY);
+	return CalculateSIFT(grayImg, thresholdedMask,outputImage);
 }
 
 
