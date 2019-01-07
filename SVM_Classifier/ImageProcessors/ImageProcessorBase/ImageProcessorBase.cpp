@@ -2,11 +2,10 @@
 #include <opencv2/highgui.hpp>
 #include <iostream>
 
-ImageProcessorBase::ImageProcessorBase(int meshGap, int meshWidth, int meshHeight) : imageWidth(meshWidth),
-imageHeight(meshHeight)
+ImageProcessorBase::ImageProcessorBase(int imageWidth, int ImageHeight, int meshGap) : imageWidth(imageWidth),
+imageHeight(ImageHeight),meshGap(meshGap)
 {
-	this->meshGap = meshGap;
-	mesh = CreateMesh(meshGap, meshWidth, meshHeight);
+	if(meshGap>0) 	mesh = CreateMesh(meshGap, imageWidth, ImageHeight);
 }
 
 void ImageProcessorBase::ClassifyImage(const Mat& image, Mat& outputImage) const
@@ -85,9 +84,7 @@ vector<vector<KeyPoint>> ImageProcessorBase::SplitAndCalculateKeyPoints(const Ma
 }
 
 void ImageProcessorBase::DrawResults(const vector<float>& results,  Mat& resultImage)
-{
-	
-	
+{	
 	resultImage = mesh.clone();
 	vector<Point> gridPoints;
 	findNonZero(resultImage, gridPoints);

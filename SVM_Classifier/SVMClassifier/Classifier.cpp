@@ -3,6 +3,7 @@
 #include "../Helpers/ImageDataManager.h"
 #include "../ImageProcessors/ImageProcessorBase/ImageProcessorBase.h"
 #include <numeric>
+#include <fstream>
 using namespace std;
 using namespace filesystem;
 
@@ -75,7 +76,15 @@ void Classifier::TestImages()
 		
 		Mat mesh = imageProcessor->Mesh();
 		Mat meshedMask;
-		multiply(imageGroup.Mask, mesh, meshedMask);
+		if (mesh.rows > 0) 
+		{
+			multiply(imageGroup.Mask, mesh, meshedMask);
+		}
+		else
+		{
+			meshedMask = imageGroup.Mask;
+		}
+
 		
 
 		Mat truePositivesImage;
@@ -106,6 +115,15 @@ void Classifier::TestImages()
 
 	float averagePrecision = std::accumulate(precisions.begin(), precisions.end(), 0.0) / precisions.size();
 	float averageRecall = std::accumulate(recalls.begin(), recalls.end(), 0.0) / recalls.size();
+	std::ofstream textFile("results.txt");
+	for(int i=0;i<precisions.size(); i++)
+	{
+		textFile << precisions[i]<< "\t"<< recalls[i] << endl;
+	}
+	textFile << "Average precision: " << averagePrecision << endl;
+	textFile << "Average recall: " << averageRecall << endl;
+	textFile.close();
+
 
 }
 

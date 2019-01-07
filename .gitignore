@@ -9,6 +9,7 @@ SVM_Classifier1/
 SVM_Classifier/tests
 BackgroundMaskCreator/
 TEST_badminton
+*.txt
 *.jpg
 *.xml
 Test_Masks

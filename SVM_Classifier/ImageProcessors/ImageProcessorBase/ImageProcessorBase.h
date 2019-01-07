@@ -8,7 +8,7 @@ using namespace cv;
 class ImageProcessorBase
 {
 public:
-	ImageProcessorBase(int meshGap, int meshWidth, int meshHeight);
+	ImageProcessorBase(int imageWidth, int ImageHeight, int meshGap);	
 
 	virtual void CalculateSVMInput(const ImageGroup & images, SVMInput & svmInput)const;
 	virtual void ProcessImage(const Mat& image, const Mat& mask, Mat& outputImage) const = 0;
