@@ -31,13 +31,13 @@
     <Filter Include="Classifier">
       <UniqueIdentifier>{127af1f1-0c0d-42ab-85da-596c65f11ca7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ImageProcessors\SiftImageProcessor">
+      <UniqueIdentifier>{8f4b3a05-3335-4eb4-a3a4-2f7b2be48243}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageProcessors\ImageProcessor.cpp">
-      <Filter>ImageProcessors</Filter>
     </ClCompile>
     <ClCompile Include="ImageProcessors\ImageProcessorBase\ImageProcessorBase.cpp">
       <Filter>ImageProcessors\ImageProcessorBase</Filter>
@@ -54,6 +54,9 @@
     <ClCompile Include="SVMClassifier\Classifier.cpp">
       <Filter>Classifier</Filter>
     </ClCompile>
+    <ClCompile Include="ImageProcessors\SiftImageProcessor.cpp">
+      <Filter>ImageProcessors\SiftImageProcessor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Helpers\HelperStructs.h">
@@ -61,9 +64,6 @@
     </ClInclude>
     <ClInclude Include="Helpers\ImageDataManager.h">
       <Filter>Helpers</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageProcessors\ImageProcessor.h">
-      <Filter>ImageProcessors</Filter>
     </ClInclude>
     <ClInclude Include="ImageProcessors\ImageProcessorBase\ImageProcessorBase.h">
       <Filter>ImageProcessors\ImageProcessorBase</Filter>
@@ -76,6 +76,9 @@
     </ClInclude>
     <ClInclude Include="SVMClassifier\Classifier.h">
       <Filter>Classifier</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageProcessors\SiftImageProcessor.h">
+      <Filter>ImageProcessors\SiftImageProcessor</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -3,7 +3,7 @@
 #include <opencv2/highgui/highgui.hpp>
 
 #include "SVMClassifier/Classifier.h"
-#include "ImageProcessors/ImageProcessor.h"
+#include "ImageProcessors/SiftImageProcessor/SiftImageProcessor.h"
 #include "ImageProcessors/LBPImageProcessor/LBPImageProcessor.h"
 #include "ImageProcessors/MultiChannelImageProcessor/MultiChannelImageProcessor.h"
 
@@ -31,7 +31,7 @@ int main(int argc, char **argv)
 			//fs1.release();
 
 
-		Classifier classifier(make_unique<ImageProcessor>(10, 1920, 1080));
+		Classifier classifier(make_unique<SiftImageProcessor>(10, 1920, 1080));
 		//classifier.LoadSVM("SVM_LBP.xml");
 
 		//lassifier.LoadData(data, label);
