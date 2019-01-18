@@ -4,6 +4,7 @@
 #include "../ImageProcessors/ImageProcessorBase/ImageProcessorBase.h"
 #include <numeric>
 #include <fstream>
+#include "../ImageProcessors/BOWImageProcessor/BOWImageProcessor.h"
 using namespace std;
 using namespace filesystem;
 
@@ -17,7 +18,7 @@ Classifier::Classifier(unique_ptr<ImageProcessorBase> _imageProcessor)
 Classifier::Classifier(unique_ptr<ImageProcessorBase> _imageProcessor, Mat bowDictionary) : Classifier(
 	move(_imageProcessor))
 {
-	BowDictionary(bowDictionary);
+	
 }
 
 Classifier::Classifier(unique_ptr<ImageProcessorBase> _imageProcessor, Mat bowDictionary, string svmPath) : Classifier(
@@ -62,7 +63,6 @@ void Classifier::TestImages()
 	vector<float> precisions;
 	vector<float> recalls;
 
-
 	for (auto testPath : testPaths)
 	{
 		cout << "testing:\t" << testPath.ImageFileName << endl;
@@ -72,7 +72,6 @@ void Classifier::TestImages()
 		auto results = TestImage(imageGroup.Image);
 		Mat resultImage;
 		imageProcessor->DrawResults(results, resultImage);
-
 		
 		Mat mesh = imageProcessor->Mesh();
 		Mat meshedMask;
@@ -83,9 +82,7 @@ void Classifier::TestImages()
 		else
 		{
 			meshedMask = imageGroup.Mask;
-		}
-
-		
+		}		
 
 		Mat truePositivesImage;
 		multiply(resultImage, imageGroup.Mask, truePositivesImage);
@@ -106,10 +103,10 @@ void Classifier::TestImages()
 
 		cout << "Precision\t" + std::to_string(precision) + "\tRecall:\t" + std::to_string(recall)<<endl;
 
-	/*	imwrite("result.jpg", resultImage);
+		imwrite("result.jpg", resultImage);
 		imwrite("mask.jpg", imageGroup.Mask);
 		imwrite("true_positive.jpg", truePositivesImage);
-		imwrite("false_positive.jpg", falsePositivesImage);*/
+		imwrite("false_positive.jpg", falsePositivesImage);
 
 	}
 
@@ -127,42 +124,12 @@ void Classifier::TestImages()
 
 }
 
-void Classifier::SaveDictionary(Mat dictionary)
+void Classifier::CreateBowDictionary()
 {
-	FileStorage fs("cylinder_dict.yml", FileStorage::WRITE);
-	fs << "vocabulary" << dictionary;
-	fs.release();
+	auto bowImageProcessor=dynamic_cast<BOWImageProcessor*>(imageProcessor.get());
+	bowImageProcessor->CreateBowDictionary(trainPaths);
 }
 
-Mat Classifier::CreateBowDictionary()
-{
-	cout << "Building dictionary..." << endl;
-	Mat features;
-	for (auto trainPath : trainPaths)
-	{
-		cout << "Processing:\t" << trainPath.ImageFileName << endl;
-		auto imageGroup = ImageDataManager::FetchImages(trainPath.DirectoryPath, trainPath.ImageFileName, CV_LOAD_IMAGE_COLOR);
-		SVMInput processedImage;
-		imageProcessor->CalculateSVMInput(imageGroup, processedImage);
-		features.push_back(processedImage.Data);
-	}
-	int dictionarySize = 200;
-	//define Term Criteria
-	TermCriteria tc(CV_TERMCRIT_EPS, 10000, 1e-9);
-	//retries number
-	int retries = 1;
-	//necessary flags
-	int flags = KMEANS_PP_CENTERS;
-	//Create the BoW (or BoF) trainer
-	BOWKMeansTrainer bowTrainer(dictionarySize, tc, retries, flags);
-	//cluster the feature vectors
-	Mat bowDictionary = bowTrainer.cluster(features);
-	//store the vocabulary
-	SaveDictionary(bowDictionary);
-	BowDictionary(bowDictionary);
-
-	return Mat();
-}
 
 void Classifier::TrainSvm(Mat svmData, Mat_<float> svmLabels)
 {
@@ -229,95 +196,7 @@ void Classifier::TrainSvm()
 
 }
 
-void Classifier::TrainBowSVM()
-{
-	Mat svmData;
-	Mat_<float> svmLabels;
-	Ptr<DescriptorMatcher> matcher(new FlannBasedMatcher);
-	//create Sift feature point extracter
-	Ptr<FeatureDetector> detector(new SiftFeatureDetector());
-	//create Sift descriptor extractor
-	Ptr<DescriptorExtractor> extractor(new SiftDescriptorExtractor);
-	//create BoF (or BoW) descriptor extractor
-	BOWImgDescriptorExtractor bowImgDescriptorExtractor(extractor, matcher);
-	//Set the dictionary with the vocabulary we created in the first step
-	bowImgDescriptorExtractor.setVocabulary(bowDictionary);
-	for (auto trainPath : trainPaths)
-	{
-		cout << "Calculating:\t" << trainPath.ImageFileName << endl;
-		auto imageGroup = ImageDataManager::FetchImages(trainPath.DirectoryPath, trainPath.ImageFileName);
 
-		auto maskKeyPoints = imageProcessor->SplitAndCalculateKeyPoints(imageGroup.Image, imageGroup.Mask);
-		if (maskKeyPoints.size() == 0) continue;
-
-		Mat_<float> maskLabel = (Mat_<float>(1, 1) << 1);
-		for (vector<KeyPoint> maskKeyPoint : maskKeyPoints)
-		{
-			Mat bowDescriptor;
-			//extract BoW (or BoF) descriptor from given image
-			bowImgDescriptorExtractor.compute(imageGroup.Image, maskKeyPoint, bowDescriptor);
-			svmData.push_back(bowDescriptor);
-
-			svmLabels.push_back(maskLabel);
-		}
-
-		auto backgroundMaskKeyPoints = imageProcessor->SplitAndCalculateKeyPoints(
-			imageGroup.Image, imageGroup.BackgroundMask, maskKeyPoints.size());
-
-		if (backgroundMaskKeyPoints.size() == 0) continue;
-
-		Mat_<float> backgroundMaskLabel = (Mat_<float>(1, 1) << 0);
-		for (vector<KeyPoint> backgroundMaskKeyPoint : backgroundMaskKeyPoints)
-		{
-			Mat bowDescriptor;
-			//extract BoW (or BoF) descriptor from given image
-			bowImgDescriptorExtractor.compute(imageGroup.Image, backgroundMaskKeyPoint, bowDescriptor);
-			svmData.push_back(bowDescriptor);
-			svmLabels.push_back(backgroundMaskLabel);
-		}
-
-		/*auto maskDescriptors =imageProcessor->SplitAndCalculateKeyPoints(imageGroup.Image,imageGroup.Mask);
-		if (maskDescriptors.size() == 0) continue;
-
-		auto backgroundMaskDescriptors = imageProcessor->SplitAndCalculateKeyPoints(imageGroup.Image, imageGroup.BackgroundMask);
-*/
-
-
-/*auto svmInput = imageProcessor->CalculateSVMInput(imageGroup);
-svmData.push_back(svmInput.Data);
-svmLabels.push_back(svmInput.Labels);*/
-	}
-
-	try
-	{
-		cout << "Saving data for later :)";
-		cout << "Saving data for later :)";
-		FileStorage fs("svmData_80pr_scale_20.xml", FileStorage::WRITE);
-		fs << "svmData_80_scale_20" << svmData;
-		fs.release();
-
-		fs = FileStorage("svmLabel_80pr_scale_20.xml", FileStorage::WRITE);
-		fs << "svmLabel_80_scale_20" << svmLabels;
-		fs.release();
-	}
-	catch (...)
-	{
-	}
-
-
-
-
-
-	CvSVMParams params;
-	params.svm_type = CvSVM::C_SVC;
-	params.kernel_type = CvSVM::LINEAR;
-	params.term_crit = cvTermCriteria(CV_TERMCRIT_ITER, 500, 1e-6);
-
-	cout << "Training svm" << endl;
-	svm->train(svmData, svmLabels, Mat(), Mat(), params);
-	cout << "Saving svm";
-	svm->save("BOWSVM_80%_scale20.xml");
-}
 
 vector<float> Classifier::TestImage(const Mat& testImage) const
 {
@@ -416,10 +295,6 @@ vector<float> Classifier::TestImage(const Mat& testImage) const
 //	waitKey();*/
 //	return predictions;
 //}
-
-
-
-
 
 void Classifier::VisualizeClassification(const vector<float>& results, Mat &outputImage) const
 {

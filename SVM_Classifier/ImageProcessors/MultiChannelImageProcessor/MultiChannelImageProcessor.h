@@ -1,10 +1,11 @@
 #pragma once
-#include "../ImageProcessorBase/ImageProcessorBase.h"
-#include <opencv2/core/core.hpp>
 
-class MultiChannelImageProcessor:public ImageProcessorBase
+#include <opencv2/core/core.hpp>
+#include "../SiftImageProcessor/SiftImageProcessor.h"
+
+class MultiChannelImageProcessor:public SiftImageProcessor
 {
 public:
-	MultiChannelImageProcessor(int meshGap, int meshWidth, int meshHeight);
-	void ProcessImage(const Mat& image, const Mat& mask,Mat& outputImage)const override;
+	MultiChannelImageProcessor(int meshGap, int imageWidth, int imageHeight);
+	void ProcessImage(const Mat& image, const Mat& mask,Mat& outputImage) override;
 };

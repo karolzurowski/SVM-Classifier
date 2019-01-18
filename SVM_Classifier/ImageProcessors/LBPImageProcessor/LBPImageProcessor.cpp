@@ -9,7 +9,7 @@ LBPImageProcessor::LBPImageProcessor(int meshGap, int meshWidth, int meshHeight)
 	regionScale = 20;
 }
 
-void LBPImageProcessor::ProcessImage(const Mat& image, const Mat& mask, Mat& outputImage) const
+void LBPImageProcessor::ProcessImage(const Mat& image, const Mat& mask, Mat& outputImage) 
 {
 
 	//Mat_<float> histograms;
@@ -108,7 +108,7 @@ void LBPImageProcessor::DrawResults(const vector<float>& results, Mat& mat)
 
 }
 
-void LBPImageProcessor::ClassifyImage(const Mat& image, Mat & outputImage) const
+void LBPImageProcessor::ClassifyImage(const Mat& image, Mat & outputImage) 
 {
 	cout << "testing image..." << endl;
 	outputImage.convertTo(outputImage, CV_8UC1);

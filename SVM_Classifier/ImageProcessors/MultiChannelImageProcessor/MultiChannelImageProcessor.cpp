@@ -3,12 +3,12 @@
 #include "MultiChannelImageProcessor.h"
 #include <opencv2/contrib/contrib.hpp>
 
-MultiChannelImageProcessor::MultiChannelImageProcessor(int meshGap, int meshWidth, int meshHeight) : ImageProcessorBase(
-	meshGap, meshWidth, meshHeight)
+MultiChannelImageProcessor::MultiChannelImageProcessor(int meshGap, int imageWidth, int imageHeight) : SiftImageProcessor(
+	meshGap, imageWidth, imageHeight)
 {
 }
 
-void MultiChannelImageProcessor::ProcessImage(const Mat& image, const Mat& mask,Mat& outputImage) const
+void MultiChannelImageProcessor::ProcessImage(const Mat& image, const Mat& mask,Mat& outputImage) 
 {
 	vector<Mat> channels(3);
 	Mat imageHSV;

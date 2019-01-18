@@ -7,10 +7,10 @@ class LBPImageProcessor :public ImageProcessorBase
 {
 public:
 	LBPImageProcessor(int meshGap, int meshWidth, int meshHeight);
-	void ProcessImage(const Mat& image, const Mat& mask, Mat& outputImage)const override;
+	void ProcessImage(const Mat& image, const Mat& mask, Mat& outputImage) override;
 	void DrawResults(const vector<float>& results, Mat& mat) override;
 
-	void ClassifyImage(const Mat& image,Mat& outputImage) const override;
+	void ClassifyImage(const Mat& image,Mat& outputImage)  override;
 protected:
 	void CalculateLBP(const Mat& inputImage, Mat& outputImage) const;
 

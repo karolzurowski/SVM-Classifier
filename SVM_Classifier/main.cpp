@@ -6,6 +6,7 @@
 #include "ImageProcessors/SiftImageProcessor/SiftImageProcessor.h"
 #include "ImageProcessors/LBPImageProcessor/LBPImageProcessor.h"
 #include "ImageProcessors/MultiChannelImageProcessor/MultiChannelImageProcessor.h"
+#include "ImageProcessors/BOWImageProcessor/BOWImageProcessor.h"
 
 using namespace cv;
 using namespace std;
@@ -15,10 +16,10 @@ int main(int argc, char **argv)
 {
 	try
 	{
-		/*	Mat dictionary;
-			FileStorage fs("dictionary.yml", FileStorage::READ);
+			Mat dictionary;
+			FileStorage fs("cylinder_dict.yml", FileStorage::READ);
 			fs["vocabulary"] >> dictionary;
-			fs.release();*/
+			fs.release();
 
 			//Mat data;
 			//FileStorage fs("LBP_overlapp_data.xml", FileStorage::READ);
@@ -31,19 +32,21 @@ int main(int argc, char **argv)
 			//fs1.release();
 
 
-		Classifier classifier(make_unique<SiftImageProcessor>(10, 1920, 1080));
-		//classifier.LoadSVM("SVM_LBP.xml");
+		Classifier classifier(make_unique<BOWImageProcessor>(dictionary, 1920, 1080,10));
+		classifier.LoadSVM("SVM_LBP.xml");
 
 		//lassifier.LoadData(data, label);
 
-		classifier.AddTrainPath("C:\\Users\\karol\\OneDrive\\Dokumenty\\Dataset_Zakrzowek\\Training_data\\small\\cylinder");
+		classifier.AddTrainPath("C:\\Users\\karol\\OneDrive\\Dokumenty\\Dataset_Zakrzowek\\Training_data\\metal_cylinder_2");
 		classifier.AddTestPath("C:\\Users\\karol\\OneDrive\\Dokumenty\\Dataset_Zakrzowek\\Training_data\\small\\cylinder");
 		//	svm.TrainBowSVM();
-		//	classifier.CreateBowDictionary();
-		classifier.TrainSvm();
+			//classifier.CreateBowDictionary();
+
+		//classifier.CreateBowDictionary();
+	//	classifier.TrainSvm();
 		classifier.TestImages();
 
-		string testImagePath = "C:\\Users\\karol\\OneDrive\\Dokumenty\\Dataset_Zakrzowek\\Training_data\\small\\one_racket\\Original_Frames\\badminton_racket_0149.jpg";
+	//	string testImagePath = "C:\\Users\\karol\\OneDrive\\Dokumenty\\Dataset_Zakrzowek\\Training_data\\small\\one_racket\\Original_Frames\\badminton_racket_0149.jpg";
 		//	//string testImagePath1 = "C:\\Users\\karol\\Desktop\\metal_cylinder0306.jpg";
 		//	//auto results = classifier.TestImage(testImagePath);
 		//Mat testMat;

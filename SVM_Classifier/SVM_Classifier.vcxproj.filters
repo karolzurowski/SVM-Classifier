@@ -34,6 +34,9 @@
     <Filter Include="ImageProcessors\SiftImageProcessor">
       <UniqueIdentifier>{8f4b3a05-3335-4eb4-a3a4-2f7b2be48243}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ImageProcessors\BOWImageProcessor">
+      <UniqueIdentifier>{69f059f7-6929-4325-89ac-148a39108cf4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -54,8 +57,11 @@
     <ClCompile Include="SVMClassifier\Classifier.cpp">
       <Filter>Classifier</Filter>
     </ClCompile>
-    <ClCompile Include="ImageProcessors\SiftImageProcessor.cpp">
+    <ClCompile Include="ImageProcessors\SiftImageProcessor\SiftImageProcessor.cpp">
       <Filter>ImageProcessors\SiftImageProcessor</Filter>
+    </ClCompile>
+    <ClCompile Include="ImageProcessors\BOWImageProcessor\BOWImageProcessor.cpp">
+      <Filter>ImageProcessors\BOWImageProcessor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -77,7 +83,10 @@
     <ClInclude Include="SVMClassifier\Classifier.h">
       <Filter>Classifier</Filter>
     </ClInclude>
-    <ClInclude Include="ImageProcessors\SiftImageProcessor.h">
+    <ClInclude Include="ImageProcessors\BOWImageProcessor\BOWImageProcessor.h">
+      <Filter>ImageProcessors\BOWImageProcessor</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageProcessors\SiftImageProcessor\SiftImageProcessor.h">
       <Filter>ImageProcessors\SiftImageProcessor</Filter>
     </ClInclude>
   </ItemGroup>

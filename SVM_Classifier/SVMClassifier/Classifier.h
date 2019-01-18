@@ -17,22 +17,17 @@ public:
 	bool AddTrainPath(const path& imagesDirectory);
 	bool AddTestPath(const path& imagesDirectory);
 	void TestImages();
-	void SaveDictionary(Mat dictionary);
-	Mat CreateBowDictionary();
+	
+	void CreateBowDictionary();
 	void TrainSvm(Mat svmData, Mat_<float> svmLabels);
 	void VisualizeClassification(const vector<float>& results, Mat &outputImage) const;
 	vector<float> TestImage(const Mat& testImage) const;
 	//void VisualizeBOWClassification(vector<float> predictions,Mat &outputImage) const;
 	//vector<float> TestBOWSVM(const path& testImage) const;
-	void TrainSvm();
-	void TrainBowSVM();
-	Mat BowDictionary() const { return  hasBowDictionary ? bowDictionary : Mat(); }
+	void TrainSvm();	
+	
 	void LoadSVM(const path& svmPath);
-	void BowDictionary(const Mat& bowDictionary)
-	{
-		this->bowDictionary = bowDictionary;
-		hasBowDictionary = true;
-	}
+	
 
 	void LoadData(const Mat& data, const Mat& label);
 
@@ -40,10 +35,10 @@ public:
 private:
 	unique_ptr<ImageProcessorBase> imageProcessor;
 	unique_ptr<CvSVM> svm;
-	int patchScale = 20;
+	//int patchScale = 20;
 	vector<ImagePath> trainPaths;
 	vector<ImagePath> testPaths;
-	bool hasBowDictionary;
-	Mat bowDictionary;
+	
+	
 	KNearest knn;
 };

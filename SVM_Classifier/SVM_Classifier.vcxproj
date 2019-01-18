@@ -133,6 +133,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Helpers\ImageDataManager.cpp" />
+    <ClCompile Include="ImageProcessors\BOWImageProcessor\BOWImageProcessor.cpp" />
     <ClCompile Include="ImageProcessors\SiftImageProcessor\SiftImageProcessor.cpp" />
     <ClCompile Include="ImageProcessors\ImageProcessorBase\ImageProcessorBase.cpp" />
     <ClCompile Include="ImageProcessors\LBPImageProcessor\LBPImageProcessor.cpp" />
@@ -143,6 +144,7 @@
   <ItemGroup>
     <ClInclude Include="Helpers\HelperStructs.h" />
     <ClInclude Include="Helpers\ImageDataManager.h" />
+    <ClInclude Include="ImageProcessors\BOWImageProcessor\BOWImageProcessor.h" />
     <ClInclude Include="ImageProcessors\SiftImageProcessor\SiftImageProcessor.h" />
     <ClInclude Include="ImageProcessors\ImageProcessorBase\ImageProcessorBase.h" />
     <ClInclude Include="ImageProcessors\LBPImageProcessor\LBPImageProcessor.h" />
