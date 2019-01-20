@@ -18,7 +18,7 @@ Classifier::Classifier(unique_ptr<ImageProcessorBase> _imageProcessor)
 Classifier::Classifier(unique_ptr<ImageProcessorBase> _imageProcessor, Mat bowDictionary) : Classifier(
 	move(_imageProcessor))
 {
-	
+
 }
 
 Classifier::Classifier(unique_ptr<ImageProcessorBase> _imageProcessor, Mat bowDictionary, string svmPath) : Classifier(
@@ -62,6 +62,7 @@ void Classifier::TestImages()
 {
 	vector<float> precisions;
 	vector<float> recalls;
+	std::ofstream textFile("results.txt");
 
 	for (auto testPath : testPaths)
 	{
@@ -72,28 +73,42 @@ void Classifier::TestImages()
 		auto results = TestImage(imageGroup.Image);
 		Mat resultImage;
 		imageProcessor->DrawResults(results, resultImage);
-		
-		Mat mesh = imageProcessor->Mesh();
-		Mat meshedMask;
-		if (mesh.rows > 0) 
-		{
-			multiply(imageGroup.Mask, mesh, meshedMask);
-		}
-		else
-		{
-			meshedMask = imageGroup.Mask;
-		}		
 
-		Mat truePositivesImage;
-		multiply(resultImage, imageGroup.Mask, truePositivesImage);
+		Mat mesh = imageProcessor->Mesh();
+		Mat mask = imageGroup.Mask;
 		Mat invertedMask;
 		bitwise_not(imageGroup.Mask, invertedMask);
+		Mat invertedResult;
+		bitwise_not(resultImage, invertedResult);
+		if (mesh.rows > 0)
+		{
+			multiply(imageGroup.Mask, mesh, mask);
+			multiply(invertedMask, mesh, invertedMask);
+			multiply(invertedResult, mesh, invertedResult);
+		}
+
+
+		Mat truePositivesImage;
+		multiply(mask, resultImage, truePositivesImage);
+		int truePositives = countNonZero(truePositivesImage);
+
 		Mat falsePositivesImage;
 		multiply(invertedMask, resultImage, falsePositivesImage);
+		int falsePositives = countNonZero(falsePositivesImage);
 
-		int truePositives = countNonZero(truePositivesImage);
-		int falsePositives = countNonZero(falsePositivesImage); 
-		int relevantElements = countNonZero(meshedMask);
+		Mat trueNegativesImage;
+		multiply(invertedMask, invertedResult, trueNegativesImage);
+		int trueNegatives = countNonZero(trueNegativesImage);
+
+		Mat falseNegativesImage;
+		multiply(mask, invertedResult, falseNegativesImage);
+		int falseNegatives = countNonZero(falseNegativesImage);
+
+		int relevantElements = countNonZero(mask);
+		int unrelevantElements = countNonZero(invertedMask);
+
+
+
 
 		float precision = (float)truePositives / (truePositives + falsePositives);
 		float recall = (float)truePositives / relevantElements;
@@ -101,22 +116,25 @@ void Classifier::TestImages()
 		precisions.push_back(precision);
 		recalls.push_back(recall);
 
-		cout << "Precision\t" + std::to_string(precision) + "\tRecall:\t" + std::to_string(recall)<<endl;
 
-		imwrite("result.jpg", resultImage);
-		imwrite("mask.jpg", imageGroup.Mask);
-		imwrite("true_positive.jpg", truePositivesImage);
-		imwrite("false_positive.jpg", falsePositivesImage);
+		textFile << "True positive:\t" << truePositives << "\tFalse positives:\t" << falsePositives
+			<< "\tTrue negatives:\t" << trueNegatives << "\tFalse negatives:\t" << falseNegatives 
+			<<  "\tPrecision\t"<<precision<<"\tRecall:\t"<<recall<< endl;
+		
+		cout << "Precision\t" + std::to_string(precision) + "\tRecall:\t" + std::to_string(recall) << endl;
+		/*
+				imwrite("result.jpg", resultImage);
+				imwrite("mask.jpg", imageGroup.Mask);
+				imwrite("true_positive.jpg", truePositivesImage);
+				imwrite("false_positive.jpg", falsePositivesImage);
+				imwrite("false_negative.jpg", falseNegativesImage);
+				imwrite("true_negative.jpg", trueNegativesImage);*/
 
 	}
 
 	float averagePrecision = std::accumulate(precisions.begin(), precisions.end(), 0.0) / precisions.size();
 	float averageRecall = std::accumulate(recalls.begin(), recalls.end(), 0.0) / recalls.size();
-	std::ofstream textFile("results.txt");
-	for(int i=0;i<precisions.size(); i++)
-	{
-		textFile << precisions[i]<< "\t"<< recalls[i] << endl;
-	}
+
 	textFile << "Average precision: " << averagePrecision << endl;
 	textFile << "Average recall: " << averageRecall << endl;
 	textFile.close();
@@ -126,7 +144,7 @@ void Classifier::TestImages()
 
 void Classifier::CreateBowDictionary()
 {
-	auto bowImageProcessor=dynamic_cast<BOWImageProcessor*>(imageProcessor.get());
+	auto bowImageProcessor = dynamic_cast<BOWImageProcessor*>(imageProcessor.get());
 	bowImageProcessor->CreateBowDictionary(trainPaths);
 }
 

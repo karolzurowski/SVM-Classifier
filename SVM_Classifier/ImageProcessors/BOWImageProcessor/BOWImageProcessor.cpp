@@ -71,9 +71,9 @@ void BOWImageProcessor::DrawResults(const vector<float>& results, Mat& outputIma
 
 	int resultIndex=0;
 
-	for (int y = 0; y < outputImage.rows; y += regionHeight)
+	for (int y = 0; y <= outputImage.rows - regionHeight; y += 20)
 	{
-		for (int x = 0; x < outputImage.cols; x += regionWidth)
+		for (int x = 0; x <= outputImage.cols - regionWidth; x += 20)
 		{
 			Rect rect = Rect(x, y, regionWidth, regionHeight);
 			if (results[resultIndex++] == 1)
@@ -139,9 +139,9 @@ vector<vector<KeyPoint>> BOWImageProcessor::SplitAndCalculateKeyPoints(const Mat
 	vector<Mat> descriptors;
 
 
-	for (int y = 0; y < image.rows; y += regionHeight)
+	for (int y = 0; y <= image.rows - regionHeight; y += 20)
 	{
-		for (int x = 0; x < image.cols; x += regionWidth)
+		for (int x = 0; x <= image.cols - regionWidth; x += 20)
 		{
 			Rect rect = Rect(x, y, regionWidth, regionHeight);
 		

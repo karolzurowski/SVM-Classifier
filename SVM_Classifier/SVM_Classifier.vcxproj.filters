@@ -65,9 +65,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Helpers\HelperStructs.h">
-      <Filter>Helpers</Filter>
-    </ClInclude>
     <ClInclude Include="Helpers\ImageDataManager.h">
       <Filter>Helpers</Filter>
     </ClInclude>
@@ -88,6 +85,9 @@
     </ClInclude>
     <ClInclude Include="ImageProcessors\SiftImageProcessor\SiftImageProcessor.h">
       <Filter>ImageProcessors\SiftImageProcessor</Filter>
+    </ClInclude>
+    <ClInclude Include="Helpers\HelperStructs.h">
+      <Filter>Helpers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
