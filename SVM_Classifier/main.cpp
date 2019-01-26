@@ -1,7 +1,7 @@
 #include<iostream>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
-
+#include <opencv2/gpu/gpu.hpp>
 #include "SVMClassifier/Classifier.h"
 #include "ImageProcessors/SiftImageProcessor/SiftImageProcessor.h"
 #include "ImageProcessors/LBPImageProcessor/LBPImageProcessor.h"
@@ -14,6 +14,10 @@ using namespace std;
 
 int main(int argc, char **argv)
 {
+
+
+
+
 	try
 	{
 			Mat dictionary;
@@ -33,7 +37,7 @@ int main(int argc, char **argv)
 
 
 	//	Classifier classifier(make_unique<BOWImageProcessor>(dictionary, 1920, 1080,10));
-		Classifier classifier(make_unique<BOWImageProcessor>( 1920, 1080,10));
+		Classifier classifier(make_unique<BOWImageProcessor>( 1920, 1080,5));
 		classifier.LoadSVM("SVM_SIFT.xml");
 
 		//lassifier.LoadData(data, label);
@@ -41,11 +45,11 @@ int main(int argc, char **argv)
 		classifier.AddTrainPath("C:\\Users\\karol\\OneDrive\\Dokumenty\\Dataset_Zakrzowek\\Training_data\\metal_cylinder_2");
 		classifier.AddTestPath("C:\\Users\\karol\\OneDrive\\Dokumenty\\Dataset_Zakrzowek\\Training_data\\small\\cylinder");
 		//	svm.TrainBowSVM();
-			classifier.CreateBowDictionary();
+			classifier.CreateBowDictionary(500);
 
 		//classifier.CreateBowDictionary();
 	classifier.TrainSvm();
-	//	classifier.TestImages();
+		classifier.TestImages();
 
 	//	string testImagePath = "C:\\Users\\karol\\OneDrive\\Dokumenty\\Dataset_Zakrzowek\\Training_data\\small\\one_racket\\Original_Frames\\badminton_racket_0149.jpg";
 		//	//string testImagePath1 = "C:\\Users\\karol\\Desktop\\metal_cylinder0306.jpg";

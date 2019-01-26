@@ -8,7 +8,7 @@ public:
 	BOWImageProcessor(int meshGap, int imageWidth, int imageHeight);
 	BOWImageProcessor(Mat &dictionary, int meshGap, int imageWidth, int imageHeight);
 	void ProcessImage(const Mat& image, const Mat& mask, Mat& outputImage) override;
-	Mat CreateBowDictionary(const vector<ImagePath>& trainPaths);
+	Mat CreateBowDictionary(const vector<ImagePath>& trainPaths,int dictionarySize);
 	Mat BowDictionary() const { return  hasBowDictionary ? bowDictionary : Mat(); }
 
 	void DrawResults(const vector<float>& results, Mat& mat) override;

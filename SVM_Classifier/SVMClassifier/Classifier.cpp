@@ -142,10 +142,10 @@ void Classifier::TestImages()
 
 }
 
-void Classifier::CreateBowDictionary()
+void Classifier::CreateBowDictionary(int dictionarySize)
 {
 	auto bowImageProcessor = dynamic_cast<BOWImageProcessor*>(imageProcessor.get());
-	bowImageProcessor->CreateBowDictionary(trainPaths);
+	bowImageProcessor->CreateBowDictionary(trainPaths,dictionarySize);
 }
 
 

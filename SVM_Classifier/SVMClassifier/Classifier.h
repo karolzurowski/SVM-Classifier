@@ -18,7 +18,7 @@ public:
 	bool AddTestPath(const path& imagesDirectory);
 	void TestImages();
 	
-	void CreateBowDictionary();
+	void CreateBowDictionary(int dictionarySize=200);
 	void TrainSvm(Mat svmData, Mat_<float> svmLabels);
 	void VisualizeClassification(const vector<float>& results, Mat &outputImage) const;
 	vector<float> TestImage(const Mat& testImage) const;

@@ -21,7 +21,7 @@ BOWImageProcessor::BOWImageProcessor(Mat& dictionary, int meshGap, int imageWidt
 	bowImgDescriptorExtractor.setVocabulary(bowDictionary);
 }
 
-Mat BOWImageProcessor::CreateBowDictionary(const vector<ImagePath>& trainPaths)
+Mat BOWImageProcessor::CreateBowDictionary(const vector<ImagePath>& trainPaths,int dictionarySize)
 {
 	cout << "Building dictionary..." << endl;
 	Mat features;
@@ -45,7 +45,7 @@ Mat BOWImageProcessor::CreateBowDictionary(const vector<ImagePath>& trainPaths)
 
 		features.push_back(descriptors);
 	}
-	int dictionarySize = 200;
+
 	//define Term Criteria
 	TermCriteria tc(CV_TERMCRIT_EPS, 1000, 1e-6);
 	//retries number
@@ -58,6 +58,7 @@ Mat BOWImageProcessor::CreateBowDictionary(const vector<ImagePath>& trainPaths)
 	Mat bowDictionary = bowTrainer.cluster(features);
 	//store the vocabulary
 	BowDictionary(bowDictionary);
+	bowImgDescriptorExtractor.setVocabulary(bowDictionary);
 	SaveDictionary();
 	
 	return Mat();
@@ -71,9 +72,9 @@ void BOWImageProcessor::DrawResults(const vector<float>& results, Mat& outputIma
 
 	int resultIndex=0;
 
-	for (int y = 0; y <= outputImage.rows - regionHeight; y += 20)
+	for (int y = 0; y <= outputImage.rows - regionHeight; y += regionHeight)
 	{
-		for (int x = 0; x <= outputImage.cols - regionWidth; x += 20)
+		for (int x = 0; x <= outputImage.cols - regionWidth; x += regionWidth)
 		{
 			Rect rect = Rect(x, y, regionWidth, regionHeight);
 			if (results[resultIndex++] == 1)
@@ -139,9 +140,9 @@ vector<vector<KeyPoint>> BOWImageProcessor::SplitAndCalculateKeyPoints(const Mat
 	vector<Mat> descriptors;
 
 
-	for (int y = 0; y <= image.rows - regionHeight; y += 20)
+	for (int y = 0; y <= image.rows - regionHeight; y += regionHeight)
 	{
-		for (int x = 0; x <= image.cols - regionWidth; x += 20)
+		for (int x = 0; x <= image.cols - regionWidth; x += regionWidth)
 		{
 			Rect rect = Rect(x, y, regionWidth, regionHeight);
 		
