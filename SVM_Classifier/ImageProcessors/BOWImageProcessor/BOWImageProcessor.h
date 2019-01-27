@@ -11,6 +11,8 @@ public:
 	Mat CreateBowDictionary(const vector<ImagePath>& trainPaths,int dictionarySize);
 	Mat BowDictionary() const { return  hasBowDictionary ? bowDictionary : Mat(); }
 
+
+	Mat Mesh() const override { return Mat(); }
 	void DrawResults(const vector<float>& results, Mat& mat) override;
 private:
 	Mat bowDictionary;

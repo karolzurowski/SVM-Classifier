@@ -15,7 +15,7 @@ public:
 	virtual void ClassifyImage(const Mat& image, Mat& outputImage) ;
 	Mat CalculateLabels(const Mat& maskDescriptors, const Mat& backgroundMaskDescriptors) const;
 	
-	Mat Mesh() const { return mesh; }
+	virtual Mat Mesh() const { return mesh; }
 	int RegionScale() const { return regionScale; }
 	virtual void DrawResults(const vector<float>& results,  Mat& mat);
 

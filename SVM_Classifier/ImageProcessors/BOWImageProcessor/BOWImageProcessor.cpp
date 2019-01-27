@@ -11,7 +11,7 @@ using namespace cv;
 BOWImageProcessor::BOWImageProcessor(int meshGap, int imageWidth, int imageHeight) : SiftImageProcessor(
 	meshGap, imageWidth, imageHeight), bowImgDescriptorExtractor(extractor, matcher)
 {
-//	bowImgDescriptorExtractor.setVocabulary(bowDictionary);
+//	bowImgDescriptorExtractor.setVocabulary(bowDictionary);	
 }
 
 BOWImageProcessor::BOWImageProcessor(Mat& dictionary, int meshGap, int imageWidth, int imageHeight) : BOWImageProcessor(
@@ -112,8 +112,10 @@ void BOWImageProcessor::ProcessImage(const Mat& image, const Mat& mask, Mat& out
 
 	//Set the dictionary with the vocabulary we created in the first step
 
+	Mat thresholdedMask;
+	threshold(mask, thresholdedMask, 200, 255, THRESH_BINARY);
 
-	auto maskKeyPoints = SplitAndCalculateKeyPoints(grayScaleImage, mask);
+	auto maskKeyPoints = SplitAndCalculateKeyPoints(grayScaleImage, thresholdedMask);
 	if (maskKeyPoints.size() == 0) return;
 
 	Mat_<float> maskLabel = (Mat_<float>(1, 1) << 1);

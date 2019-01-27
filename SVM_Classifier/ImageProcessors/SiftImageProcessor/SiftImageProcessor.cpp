@@ -1,6 +1,7 @@
 #include "../../Helpers/HelperStructs.h"
 #include <opencv2/contrib/contrib.hpp>
 #include "SiftImageProcessor.h"
+#include <opencv2/highgui.hpp>
 using namespace cv;
 
 
@@ -14,7 +15,7 @@ void SiftImageProcessor::ProcessImage(const Mat& image, const Mat& mask, Mat& ou
 	Mat grayImg;
 	cvtColor(image, grayImg,CV_BGR2GRAY);
 	Mat thresholdedMask;
-	threshold(mask, thresholdedMask, 100, 255, THRESH_BINARY);
+	threshold(mask, thresholdedMask, 200, 255, THRESH_BINARY);
 	return CalculateSIFT(grayImg, thresholdedMask,outputImage);
 }
 

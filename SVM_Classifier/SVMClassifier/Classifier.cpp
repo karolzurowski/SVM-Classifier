@@ -70,12 +70,13 @@ void Classifier::TestImages()
 		auto imageGroup = ImageDataManager::FetchImages(testPath.DirectoryPath, testPath.ImageFileName,
 			CV_LOAD_IMAGE_COLOR);
 
+		Mat mask;
+		threshold(imageGroup.Mask, mask, 200, 255, THRESH_BINARY);
 		auto results = TestImage(imageGroup.Image);
 		Mat resultImage;
 		imageProcessor->DrawResults(results, resultImage);
 
-		Mat mesh = imageProcessor->Mesh();
-		Mat mask = imageGroup.Mask;
+		Mat mesh = imageProcessor->Mesh();	
 		Mat invertedMask;
 		bitwise_not(imageGroup.Mask, invertedMask);
 		Mat invertedResult;
@@ -122,13 +123,13 @@ void Classifier::TestImages()
 			<<  "\tPrecision\t"<<precision<<"\tRecall:\t"<<recall<< endl;
 		
 		cout << "Precision\t" + std::to_string(precision) + "\tRecall:\t" + std::to_string(recall) << endl;
-		/*
+		
 				imwrite("result.jpg", resultImage);
 				imwrite("mask.jpg", imageGroup.Mask);
 				imwrite("true_positive.jpg", truePositivesImage);
 				imwrite("false_positive.jpg", falsePositivesImage);
 				imwrite("false_negative.jpg", falseNegativesImage);
-				imwrite("true_negative.jpg", trueNegativesImage);*/
+				imwrite("true_negative.jpg", trueNegativesImage);
 
 	}
 
@@ -260,59 +261,7 @@ vector<float> Classifier::TestImage(const Mat& testImage) const
 	return results;
 }
 
-//vector<float> Classifier::TestBOWSVM(const path& testImage) const
-//{
-//	cout << "Testing SVM";
-//	auto image = imread(testImage.string());
-//	Ptr<DescriptorMatcher> matcher(new FlannBasedMatcher);
-//	//create Sift feature point extracter
-//	Ptr<FeatureDetector> detector(new SiftFeatureDetector());
-//	//create Sift descriptor extractor
-//	Ptr<DescriptorExtractor> extractor(new SiftDescriptorExtractor);
-//	//create BoF (or BoW) descriptor extractor
-//	BOWImgDescriptorExtractor bowImgDescriptorExtractor(extractor, matcher);
-//	//Set the dictionary with the vocabulary we created in the first step
-//	bowImgDescriptorExtractor.setVocabulary(bowDictionary);
-//
-//	Mat mask = Mat::ones(1080, 1920, CV_8UC1);
-//	auto maskKeyPoints = imageProcessor->SplitAndCalculateKeyPoints(image, mask);
-//
-//	vector<float> predictions;
-//	for (vector<KeyPoint> maskKeyPoint : maskKeyPoints)
-//	{
-//		Mat bowDescriptor;
-//		//extract BoW (or BoF) descriptor from given image
-//		bowImgDescriptorExtractor.compute(image, maskKeyPoint, bowDescriptor);
-//		predictions.push_back(svm->predict(bowDescriptor));
-//	}
-//
-//	/*int regionWidth = 1920 / 20;
-//	int regionHeight = 1080 / 20;
-//
-//	Mat testMat = Mat::zeros(1080, 1920, CV_8UC1);
-//	int i = 0;
-//	Scalar scalar;
-//	for (int y = 0; y < image.rows; y += regionHeight)
-//	{
-//	for (int x = 0; x < image.cols; x += regionWidth)
-//	{
-//	Rect rect = Rect(x, y, regionWidth, regionHeight);
-//
-//	if (predictions[i++] == 1)
-//	scalar = Scalar(255, 255, 255);
-//	else
-//	scalar = Scalar(0, 0, 0);
-//
-//	rectangle(testMat, rect, scalar, -1);
-//
-//	}
-//	}
-//
-//	imshow("!!!", testMat);
-//	imwrite("testBOW.jpg", testMat);
-//	waitKey();*/
-//	return predictions;
-//}
+
 
 void Classifier::VisualizeClassification(const vector<float>& results, Mat &outputImage) const
 {
@@ -324,33 +273,6 @@ void Classifier::VisualizeClassification(const vector<float>& results, Mat &outp
 	//imwrite("knn_result1.jpg", resultImage);
 }
 
-//void Classifier::VisualizeBOWClassification(vector<float> predictions,Mat &outputImage) const
-//{
-//	auto imageWidth = imageProcessor->Mesh().cols;
-//	auto imageHeight = imageProcessor->Mesh().rows;
-//	int scale = imageProcessor->RegionScale();
-//
-//	int regionWidth = imageWidth / scale;
-//	int regionHeight = imageHeight / scale;
-//
-//	outputImage = Mat::zeros(1080, 1920, CV_8UC1);
-//	int i = 0;
-//	Scalar scalar;
-//	for (int y = 0; y < imageHeight; y += regionHeight)
-//	{
-//		for (int x = 0; x < imageWidth; x += regionWidth)
-//		{
-//			cout << i;
-//			Rect rect = Rect(x, y, regionWidth, regionHeight);
-//			if (predictions[i++] == 1)
-//				scalar = Scalar(255, 255, 255);
-//			else
-//				scalar = Scalar(0, 0, 0);
-//
-//			rectangle(outputImage, rect, scalar, -1);
-//		}
-//	}	
-//}
 
 void Classifier::LoadSVM(const path& svmPath)
 {

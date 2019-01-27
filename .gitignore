@@ -12,6 +12,7 @@ TEST_badminton
 *.txt
 *.jpg
 *.xml
+*.yml
 Test_Masks
 # User-specific files
 *.suo
