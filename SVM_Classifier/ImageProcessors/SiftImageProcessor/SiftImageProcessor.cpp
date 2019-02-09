@@ -6,7 +6,7 @@ using namespace cv;
 
 
 SiftImageProcessor::SiftImageProcessor(int meshGap, int meshWidth, int meshHeight) : ImageProcessorBase(
-	meshGap, meshWidth, meshHeight)
+	meshWidth, meshHeight,meshGap)
 {
 }
 
@@ -23,6 +23,7 @@ void SiftImageProcessor::CalculateSIFT(const Mat& image, const Mat& mask, Mat& o
 {
 	vector<KeyPoint> keyPoints;
 	CalculateKeyPoints(mask, keyPoints);
+	//siftDetector.detect(image, keyPoints, mask);
 	siftDetector.compute(image, keyPoints, outputImage);
 }
 
@@ -37,6 +38,8 @@ void SiftImageProcessor::CalculateKeyPoints(const Mat& image, vector<KeyPoint>& 
 		keyPoints.push_back(KeyPoint(point, meshGap));
 	}
 }
+
+
 
 
 

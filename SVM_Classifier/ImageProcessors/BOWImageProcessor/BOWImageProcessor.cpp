@@ -72,9 +72,9 @@ void BOWImageProcessor::DrawResults(const vector<float>& results, Mat& outputIma
 
 	int resultIndex=0;
 
-	for (int y = 0; y <= outputImage.rows - regionHeight; y += regionHeight)
+	for (int y = 0; y <= outputImage.rows - regionHeight; y += 54)
 	{
-		for (int x = 0; x <= outputImage.cols - regionWidth; x += regionWidth)
+		for (int x = 0; x <= outputImage.cols - regionWidth; x += 96)
 		{
 			Rect rect = Rect(x, y, regionWidth, regionHeight);
 			if (results[resultIndex++] == 1)
@@ -88,9 +88,7 @@ void BOWImageProcessor::DrawResults(const vector<float>& results, Mat& outputIma
 		}
 	}
 
-	imwrite("draw.jpg", outputImage);
-
-
+	//imwrite("draw.jpg", outputImage);
 }
 
 void BOWImageProcessor::SaveDictionary()
@@ -137,14 +135,14 @@ vector<vector<KeyPoint>> BOWImageProcessor::SplitAndCalculateKeyPoints(const Mat
 	int regionHeight = imageHeight / regionScale;
 
 	float maxPoints = (float)regionWidth / meshGap * regionHeight / meshGap;
-	int detectionThreshold = maxPoints * 0.9;
+	int detectionThreshold = maxPoints * 0.8;
 
 	vector<Mat> descriptors;
 
 
-	for (int y = 0; y <= image.rows - regionHeight; y += regionHeight)
+	for (int y = 0; y <= image.rows - regionHeight; y += 54)
 	{
-		for (int x = 0; x <= image.cols - regionWidth; x += regionWidth)
+		for (int x = 0; x <= image.cols - regionWidth; x += 96)
 		{
 			Rect rect = Rect(x, y, regionWidth, regionHeight);
 		
@@ -160,7 +158,7 @@ vector<vector<KeyPoint>> BOWImageProcessor::SplitAndCalculateKeyPoints(const Mat
 			int objectPoints = countNonZero(regionMeshed);
 
 			if (objectPoints < detectionThreshold) continue;
-
+			
 			//Mat processedRegion = ClassifyImage(image, rectMask);
 
 			//descriptors.push_back(processedRegion);

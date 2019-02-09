@@ -123,13 +123,14 @@ void Classifier::TestImages()
 			<<  "\tPrecision\t"<<precision<<"\tRecall:\t"<<recall<< endl;
 		
 		cout << "Precision\t" + std::to_string(precision) + "\tRecall:\t" + std::to_string(recall) << endl;
-		
-				imwrite("result.jpg", resultImage);
-				imwrite("mask.jpg", imageGroup.Mask);
+
+		string name = "tests\\BOW\\" + testPath.ImageFileName.string();
+				imwrite(name, resultImage);
+			/*	imwrite("mask.jpg", imageGroup.Mask);
 				imwrite("true_positive.jpg", truePositivesImage);
 				imwrite("false_positive.jpg", falsePositivesImage);
 				imwrite("false_negative.jpg", falseNegativesImage);
-				imwrite("true_negative.jpg", trueNegativesImage);
+				imwrite("true_negative.jpg", trueNegativesImage);*/
 
 	}
 
