@@ -45,17 +45,13 @@ Mat BOWImageProcessor::CreateBowDictionary(const vector<ImagePath>& trainPaths, 
 		features.push_back(descriptors);
 	}
 
-	//define Term Criteria
-	TermCriteria tc(CV_TERMCRIT_EPS, 1000, 1e-6);
-	//retries number
+	
+	TermCriteria tc(CV_TERMCRIT_EPS, 1000, 1e-6);	
 	int retries = 1;
-	//necessary flags
-	int flags = KMEANS_PP_CENTERS;
-	//Create the BoW (or BoF) trainer
-	BOWKMeansTrainer bowTrainer(dictionarySize, tc, retries, flags);
-	//cluster the feature vectors
+	int flags = KMEANS_PP_CENTERS;	
+	BOWKMeansTrainer bowTrainer(dictionarySize, tc, retries, flags);	
 	Mat bowDictionary = bowTrainer.cluster(features);
-	//store the vocabulary
+
 	BowDictionary(bowDictionary);
 	bowImgDescriptorExtractor.setVocabulary(bowDictionary);
 	SaveDictionary();
@@ -105,12 +101,8 @@ void BOWImageProcessor::ProcessImage(const Mat& image, const Mat& mask, Mat& out
 	Mat grayScaleImage;
 	cv::cvtColor(image, grayScaleImage, cv::COLOR_BGR2GRAY);
 
-	//create BoF (or BoW) descriptor extractor
-
-	//Set the dictionary with the vocabulary we created in the first step
-
 	Mat thresholdedMask;
-	threshold(mask, thresholdedMask, 200, 255, THRESH_BINARY);
+	threshold(mask, thresholdedMask, 200, 255, THRESH_BINARY);  //train with main object only
 
 	auto maskKeyPoints = SplitAndCalculateKeyPoints(grayScaleImage, thresholdedMask);
 	if (maskKeyPoints.size() == 0) return;
@@ -119,11 +111,9 @@ void BOWImageProcessor::ProcessImage(const Mat& image, const Mat& mask, Mat& out
 	for (vector<KeyPoint> maskKeyPoint : maskKeyPoints)
 	{
 		Mat bowDescriptor;
-		//extract BoW (or BoF) descriptor from given image
+		
 		bowImgDescriptorExtractor.compute(grayScaleImage, maskKeyPoint, bowDescriptor);
-		outputImage.push_back(bowDescriptor);
-
-		//svmLabels.push_back(maskLabel);
+		outputImage.push_back(bowDescriptor);		
 	}
 }
 
@@ -157,10 +147,7 @@ vector<vector<KeyPoint>> BOWImageProcessor::SplitAndCalculateKeyPoints(const Mat
 			int objectPoints = countNonZero(regionMeshed);
 
 			if (objectPoints < detectionThreshold) continue;
-
-			//Mat processedRegion = ClassifyImage(image, rectMask);
-
-			//descriptors.push_back(processedRegion);
+		
 			vector<KeyPoint> rectKeyPoints;
 			CalculateKeyPoints(rectMask, rectKeyPoints);
 
@@ -169,8 +156,7 @@ vector<vector<KeyPoint>> BOWImageProcessor::SplitAndCalculateKeyPoints(const Mat
 				return keyPoints;
 		}
 	}
-	return keyPoints;
-	//	return descriptors;
+	return keyPoints;	
 }
 
 
