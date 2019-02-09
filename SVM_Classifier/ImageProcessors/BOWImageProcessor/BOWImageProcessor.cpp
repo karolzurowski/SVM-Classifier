@@ -8,20 +8,19 @@
 using namespace cv;
 
 
-BOWImageProcessor::BOWImageProcessor(int meshGap, int imageWidth, int imageHeight) : SiftImageProcessor(
+BOWImageProcessor::BOWImageProcessor(int imageWidth, int imageHeight, int meshGap ) : SiftImageProcessor(
 	meshGap, imageWidth, imageHeight), bowImgDescriptorExtractor(extractor, matcher)
-{
-//	bowImgDescriptorExtractor.setVocabulary(bowDictionary);	
+{	
 }
 
-BOWImageProcessor::BOWImageProcessor(Mat& dictionary, int meshGap, int imageWidth, int imageHeight) : BOWImageProcessor(
-	meshGap, imageWidth, imageHeight)
+BOWImageProcessor::BOWImageProcessor(Mat& dictionary, int imageWidth, int imageHeight, int meshGap) : BOWImageProcessor(
+	imageWidth, imageHeight, meshGap)
 {
 	BowDictionary(dictionary);
 	bowImgDescriptorExtractor.setVocabulary(bowDictionary);
 }
 
-Mat BOWImageProcessor::CreateBowDictionary(const vector<ImagePath>& trainPaths,int dictionarySize)
+Mat BOWImageProcessor::CreateBowDictionary(const vector<ImagePath>& trainPaths, int dictionarySize)
 {
 	cout << "Building dictionary..." << endl;
 	Mat features;
@@ -60,7 +59,7 @@ Mat BOWImageProcessor::CreateBowDictionary(const vector<ImagePath>& trainPaths,i
 	BowDictionary(bowDictionary);
 	bowImgDescriptorExtractor.setVocabulary(bowDictionary);
 	SaveDictionary();
-	
+
 	return Mat();
 }
 
@@ -70,7 +69,7 @@ void BOWImageProcessor::DrawResults(const vector<float>& results, Mat& outputIma
 	int regionWidth = imageWidth / regionScale;
 	int regionHeight = imageHeight / regionScale;
 
-	int resultIndex=0;
+	int resultIndex = 0;
 
 	for (int y = 0; y <= outputImage.rows - regionHeight; y += 54)
 	{
@@ -145,7 +144,7 @@ vector<vector<KeyPoint>> BOWImageProcessor::SplitAndCalculateKeyPoints(const Mat
 		for (int x = 0; x <= image.cols - regionWidth; x += 96)
 		{
 			Rect rect = Rect(x, y, regionWidth, regionHeight);
-		
+
 
 
 			Mat rectMask = Mat::zeros(1080, 1920, CV_8UC1);
@@ -158,7 +157,7 @@ vector<vector<KeyPoint>> BOWImageProcessor::SplitAndCalculateKeyPoints(const Mat
 			int objectPoints = countNonZero(regionMeshed);
 
 			if (objectPoints < detectionThreshold) continue;
-			
+
 			//Mat processedRegion = ClassifyImage(image, rectMask);
 
 			//descriptors.push_back(processedRegion);

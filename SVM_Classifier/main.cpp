@@ -14,66 +14,10 @@ using namespace std;
 int main(int argc, char **argv)
 {
 
-
-
-
-	try
-	{
-			Mat dictionary;
-			FileStorage fs("cylinder_dict.yml", FileStorage::READ);
-			fs["vocabulary"] >> dictionary;
-			fs.release();
-
-
-		/*	Mat data;
-			FileStorage fs = FileStorage("SIFT_cylinder_data.xml", FileStorage::READ);
-			fs["SIFT_cylinder_data"] >> data;
-			fs.release();
-
-			Mat label;
-			FileStorage fs1("SIFT_cylinder_label.xml", FileStorage::READ);
-			fs1["SIFT_cylinder_label"] >> label;
-			fs1.release();*/
-
-
-	
-		Classifier classifier(make_unique<BOWImageProcessor>(dictionary,15,1920, 1080));
-		classifier.LoadSVM("SVM_LBP.xml");
-
-//	classifier.LoadData(data, label);
-
+		Classifier classifier(make_unique<BOWImageProcessor>(15, 1920, 1080));
+		classifier.CreateBowDictionary(2000);
 		classifier.AddTrainPath("C:\\Users\\karol\\OneDrive\\Dokumenty\\Dataset_Zakrzowek\\Training_data\\metal_cylinder_2");
-		classifier.AddTestPath("C:\\Users\\karol\\OneDrive\\Dokumenty\\Dataset_Zakrzowek\\Training_data\\metal_cylinder_2");
-		//	svm.TrainBowSVM();
-		//	classifier.CreateBowDictionary(2000);
-//
-		
-//classifier.TrainSvm();
-		classifier.TestImages();
-
-	//	string testImagePath = "C:\\Users\\karol\\OneDrive\\Dokumenty\\Dataset_Zakrzowek\\Training_data\\small\\one_racket\\Original_Frames\\badminton_racket_0149.jpg";
-		//	//string testImagePath1 = "C:\\Users\\karol\\Desktop\\metal_cylinder0306.jpg";
-		//	//auto results = classifier.TestImage(testImagePath);
-		//Mat testMat;
-		////	classifier.VisualizeBOWClassification(results,testMat);
-		////	classifier.VisualizeClassification(results,testMat);
-		//	namedWindow("win", CV_WINDOW_NORMAL);
-		//	imshow("win", testMat);
-		//	imwrite("SIFT_cylinder.jpg", testMat);
-		//	waitKey();
-
-
-
-		//auto results=  svm.TestBOWSVM("C:\\Users\\karol\\OneDrive\\Dokumenty\\Visual Studio 2017\\Projects\\SVM_Classifier\\badminton.jpg");
-		//svm.VisualizeClassification(results);
-		//	svm.TrainBowSVM();
-
-	}
-	catch (filesystem::filesystem_error& error)
-	{
-		cout << error.what();
-	}
-
-	waitKey(0);
+		classifier.TrainSvm();	
+	
 	return 0;
 }

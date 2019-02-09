@@ -3,7 +3,7 @@
 #include <iostream>
 #include <opencv2/highgui.hpp>
 
-LBPImageProcessor::LBPImageProcessor(int meshGap, int meshWidth, int meshHeight) : ImageProcessorBase(
+LBPImageProcessor::LBPImageProcessor( int meshWidth, int meshHeight, int meshGap) : ImageProcessorBase(
 	meshWidth, meshHeight, meshGap)
 {
 	//regionScale = 20;

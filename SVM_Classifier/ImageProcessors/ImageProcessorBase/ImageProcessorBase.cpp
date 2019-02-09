@@ -2,10 +2,10 @@
 #include <opencv2/highgui.hpp>
 #include <iostream>
 
-ImageProcessorBase::ImageProcessorBase(int imageWidth, int ImageHeight, int meshGap) : imageWidth(imageWidth),
-imageHeight(ImageHeight),meshGap(meshGap)
+ImageProcessorBase::ImageProcessorBase(int imageWidth, int imageHeight, int meshGap, int regionScale) : imageWidth(imageWidth),
+imageHeight(imageHeight),meshGap(meshGap),regionScale(regionScale)
 {
-	if(meshGap>0) 	mesh = CreateMesh(meshGap, imageWidth, ImageHeight);
+	if(meshGap>0) 	mesh = CreateMesh(meshGap, imageWidth, imageHeight);
 }
 
 void ImageProcessorBase::ClassifyImage(const Mat& image, Mat& outputImage) 
@@ -50,8 +50,6 @@ void ImageProcessorBase::DrawResults(const vector<float>& results,  Mat& resultI
 
 void ImageProcessorBase::CalculateSVMInput(const ImageGroup& images, SVMInput& svmInput) 
 {
-	//todo assert images not null
-
 	auto image = images.Image;
 	auto mask = images.Mask;
 	auto backgroundMask = images.BackgroundMask;
@@ -90,26 +88,3 @@ Mat ImageProcessorBase::CreateMesh(int meshGap, int meshWidth, int meshHeight) c
 	return mesh;
 }
 
-
-
-/*   // get the image data
- int height = image.rows;
- int width = image.cols;
-
- printf("Processing a %dx%d image\n",height,width);
-
-cv :: Size smallSize ( 110 , 70 );
-
-std :: vector < Mat > smallImages ;
-namedWindow("smallImages ", CV_WINDOW_AUTOSIZE );
-
-for  ( int y =  0 ; y < image . rows ; y += smallSize . height )
-{
-	for  ( int x =  0 ; x < image . cols ; x += smallSize . width )
-	{
-		cv :: Rect rect =   cv :: Rect ( x , y , smallSize . width , smallSize . height );
-		smallImages . push_back ( cv :: Mat ( image , rect ));
-		imshow ( "smallImages", cv::Mat ( image, rect ));
-		waitKey(0);
-	}
-}*/

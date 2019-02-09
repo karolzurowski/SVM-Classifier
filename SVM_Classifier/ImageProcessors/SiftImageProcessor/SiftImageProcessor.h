@@ -5,7 +5,7 @@
 class SiftImageProcessor:public ImageProcessorBase
 {
 public:
-	SiftImageProcessor(int meshGap, int meshWidth, int meshHeight);
+	SiftImageProcessor( int meshWidth, int meshHeight,int meshGap );
 	void ProcessImage(const Mat& image,const Mat& mask, Mat& outputImage) override;
 protected:
 	void CalculateSIFT(const Mat& image, const Mat& mask, Mat& outputImage) const;

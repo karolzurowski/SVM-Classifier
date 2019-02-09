@@ -5,7 +5,7 @@
 using namespace cv;
 
 
-SiftImageProcessor::SiftImageProcessor(int meshGap, int meshWidth, int meshHeight) : ImageProcessorBase(
+SiftImageProcessor::SiftImageProcessor( int meshWidth, int meshHeight, int meshGap) : ImageProcessorBase(
 	meshWidth, meshHeight,meshGap)
 {
 }

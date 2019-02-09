@@ -5,8 +5,8 @@
 class BOWImageProcessor :public SiftImageProcessor
 {
 public:
-	BOWImageProcessor(int meshGap, int imageWidth, int imageHeight);
-	BOWImageProcessor(Mat &dictionary, int meshGap, int imageWidth, int imageHeight);
+	BOWImageProcessor( int imageWidth, int imageHeight, int meshGap);
+	BOWImageProcessor(Mat &dictionary,  int imageWidth, int imageHeight, int meshGap);
 	void ProcessImage(const Mat& image, const Mat& mask, Mat& outputImage) override;
 	Mat CreateBowDictionary(const vector<ImagePath>& trainPaths,int dictionarySize);
 	Mat BowDictionary() const { return  hasBowDictionary ? bowDictionary : Mat(); }
